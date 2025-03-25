@@ -6,7 +6,7 @@ module.exports = {
   root: true,
   env: { node: true },
   parserOptions: {
-    project: './tsconfig.json',
+    project: ['packages/*/tsconfig.json', './*/tsconfig.json'],
   },
   plugins: ['import', 'chai-friendly', 'sort-destructure-keys', 'sort-keys-plus'],
   overrides: [
