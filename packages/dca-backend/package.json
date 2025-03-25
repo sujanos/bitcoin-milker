@@ -1,0 +1,22 @@
+{
+  "name": "dca-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "pnpm jest",
+    "lint": "pnpm eslint ./src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LIT-Protocol/vincent-dca.git"
+  },
+  "private": true,
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "esbuild": "^0.25.1",
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.3.0"
+  }
+}
