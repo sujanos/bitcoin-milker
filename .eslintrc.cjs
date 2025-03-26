@@ -6,7 +6,7 @@ module.exports = {
   root: true,
   env: { node: true },
   parserOptions: {
-    project: ['packages/*/tsconfig.json', './*/tsconfig.json'],
+    project: ['packages/*/tsconfig.json'],
   },
   plugins: ['import', 'chai-friendly', 'sort-destructure-keys', 'sort-keys-plus'],
   overrides: [
@@ -25,7 +25,10 @@ module.exports = {
       settings: {
         'import/resolver': {
           node: {
-            extensions: ['.js', '.jsx', '.ts', '.tsx'],
+            extensions: ['.js', '.jsx'],
+          },
+          typescript: {
+            extensions: ['.ts', '.tsx'],
           },
         },
         'import/internal-regex': '^@lit-protocol/',
@@ -41,6 +44,7 @@ module.exports = {
         'import/no-relative-packages': ['error'],
         'import/no-duplicates': ['error'],
         'import/no-unresolved': ['error'],
+        'import/no-extraneous-dependencies': ['off'],
         'import/order': [
           'error',
           {
