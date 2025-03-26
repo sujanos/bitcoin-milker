@@ -11,7 +11,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm -r run build",
-    "lint": "pnpm eslint .",
+    "lint": "pnpm -r lint",
     "clean": "pnpm exec rm -Rf node_modules dist && pnpm --parallel -r run clean",
     "test": "pnpm -r run test",
     "dev": "pnpm build && pnpm -r run dev",
@@ -31,7 +31,6 @@
     "eslint-config-airbnb-typescript": "^18.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^4.2.3",
-    "eslint-plugin-chai-friendly": "^0.7.4",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-sort-destructure-keys": "^1.5.0",
     "eslint-plugin-sort-keys-plus": "^1.4.0",

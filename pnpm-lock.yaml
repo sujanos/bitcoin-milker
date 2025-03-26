@@ -43,9 +43,6 @@ devDependencies:
   eslint-import-resolver-typescript:
     specifier: ^4.2.3
     version: 4.2.3(eslint-plugin-import@2.31.0)(eslint@8.57.1)
-  eslint-plugin-chai-friendly:
-    specifier: ^0.7.4
-    version: 0.7.4(eslint@8.57.1)
   eslint-plugin-import:
     specifier: ^2.29.1
     version: 2.31.0(@typescript-eslint/parser@7.18.0)(eslint-import-resolver-typescript@4.2.3)(eslint@8.57.1)
@@ -1973,15 +1970,6 @@ packages:
       eslint-import-resolver-typescript: 4.2.3(eslint-plugin-import@2.31.0)(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /eslint-plugin-chai-friendly@0.7.4(eslint@8.57.1):
-    resolution: {integrity: sha512-PGPjJ8diYgX1mjLxGJqRop2rrGwZRKImoEOwUOgoIhg0p80MkTaqvmFLe5TF7/iagZHggasvIfQlUyHIhK/PYg==}
-    engines: {node: '>=0.10.0'}
-    peerDependencies:
-      eslint: '>=3.0.0'
-    dependencies:
-      eslint: 8.57.1
     dev: true
 
   /eslint-plugin-import@2.31.0(@typescript-eslint/parser@7.18.0)(eslint-import-resolver-typescript@4.2.3)(eslint@8.57.1):
