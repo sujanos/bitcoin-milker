@@ -1,6 +1,7 @@
 {
   "extends": ["@tsconfig/node20/tsconfig.json","../../tsconfig.base.json"],
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts", "src/*.ts"],
+  "allowJs": true,
   "compilerOptions": {
     "outDir": "./dist"
   }
