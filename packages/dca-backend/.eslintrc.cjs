@@ -6,7 +6,7 @@ module.exports = {
   rules: {
     'no-underscore-dangle': ['off'],
   },
-  ignorePatterns: 'esbuild.js',
+  ignorePatterns: 'esbuild.mjs',
   overrides: [
     {
       files: ['test.spec.ts'],

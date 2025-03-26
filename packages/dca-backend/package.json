@@ -5,7 +5,8 @@
   "main": "./dist/index.js",
   "scripts": {
     "test": "pnpm jest",
-    "lint": "pnpm eslint ./src"
+    "lint": "pnpm eslint ./src",
+    "build": "node esbuild.mjs"
   },
   "repository": {
     "type": "git",
