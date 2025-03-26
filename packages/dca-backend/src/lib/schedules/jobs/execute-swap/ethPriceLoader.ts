@@ -27,7 +27,7 @@ export function assertEthereumPriceData(
 }
 
 // TODO: We should get a Coingecko API key for production
-async function batchLoadFn(keys: readonly string[]): Promise<ArrayLike<Number | Error>> {
+async function batchLoadFn(keys: readonly string[]): Promise<ArrayLike<number | Error>> {
   const res = await fetch(
     `https://api.coingecko.com/api/v3/simple/price?ids=${keys}&vs_currencies=usd`
   );
@@ -40,7 +40,15 @@ async function batchLoadFn(keys: readonly string[]): Promise<ArrayLike<Number | 
 }
 
 const loader = new DataLoader(batchLoadFn, {
-  cacheMap: wrapNodeCacheForDataloader<Number>(cache),
+  cacheMap: wrapNodeCacheForDataloader<number>(cache),
 });
 
-export const getEthereumPriceUsd = async () => loader.load('ethereum');
+export const getEthereumPriceUsd = async (): Promise<number> => {
+  const val = await loader.load('ethereum');
+
+  if (!val || typeof val !== 'number') {
+    throw new Error('Invalid response: Missing or invalid "ethereum.usd" property');
+  }
+
+  return val;
+};
