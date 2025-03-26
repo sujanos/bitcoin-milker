@@ -15,7 +15,7 @@ export const env = createEnv({
     BASE_RPC_URL: z.string().url(),
     COINRANKING_API_KEY: z.string(),
     CORS_ALLOWED_DOMAIN: z.string(),
-    IS_PRODUCTION: BooleanOrBooleanStringSchema,
+    IS_DEVELOPMENT: BooleanOrBooleanStringSchema,
     MONGODB_URI: z.string().url(),
     PORT: z.coerce.number(),
     VINCENT_DELEGATEE_PRIVATE_KEY: z.string(),

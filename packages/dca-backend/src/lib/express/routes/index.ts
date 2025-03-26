@@ -4,7 +4,7 @@ import express, { Express } from 'express';
 import { listPurchases } from './purchases';
 import { getSchedules, enableSchedule, disableSchedule, createSchedule } from './schedules';
 import { env } from '../../env';
-import { expressLogger } from '../logger';
+import { serviceLogger } from '../../logger';
 
 const { CORS_ALLOWED_DOMAIN, IS_DEVELOPMENT } = env;
 
@@ -38,9 +38,9 @@ export const registerRoutes = (app: Express) => {
   app.use(express.json());
 
   if (IS_DEVELOPMENT) {
-    expressLogger.info(`CORS is disabled for development`);
+    serviceLogger.info(`CORS is disabled for development`);
   } else {
-    expressLogger.info(`Configuring CORS with allowed domain: ${CORS_ALLOWED_DOMAIN}`);
+    serviceLogger.info(`Configuring CORS with allowed domain: ${CORS_ALLOWED_DOMAIN}`);
   }
   app.use(cors(corsConfig));
 
@@ -50,5 +50,5 @@ export const registerRoutes = (app: Express) => {
   app.put('/schedules/:scheduleId/enable', enableSchedule);
   app.put('/schedules/:scheduleId/disable', disableSchedule);
 
-  expressLogger.info(`Routes registered`);
+  serviceLogger.info(`Routes registered`);
 };
