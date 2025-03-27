@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import { PurchasedCoin } from '../../mongo/models/PurchasedCoin';
 
-export const listPurchases = async (req: Request, res: Response) => {
+export const handleListPurchasesRoute = async (req: Request, res: Response) => {
   const { walletAddress } = req.params as { walletAddress?: string };
 
   const purchases = await PurchasedCoin.find({ walletAddress })

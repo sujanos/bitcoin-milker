@@ -1,8 +1,14 @@
 import cors from 'cors';
 import express, { Express } from 'express';
 
-import { listPurchases } from './purchases';
-import { getSchedules, enableSchedule, disableSchedule, createSchedule } from './schedules';
+import { handleListPurchasesRoute } from './purchases';
+import {
+  handleListSchedulesRoute,
+  handleEnableScheduleRoute,
+  handleDisableScheduleRoute,
+  handleCreateScheduleRoute,
+  handleDeleteScheduleRoute,
+} from './schedules';
 import { env } from '../../env';
 import { serviceLogger } from '../../logger';
 
@@ -41,14 +47,15 @@ export const registerRoutes = (app: Express) => {
     serviceLogger.info(`CORS is disabled for development`);
   } else {
     serviceLogger.info(`Configuring CORS with allowed domain: ${CORS_ALLOWED_DOMAIN}`);
+    app.use(cors(corsConfig));
   }
-  app.use(cors(corsConfig));
 
-  app.get('/purchases', listPurchases);
-  app.get('/schedules', getSchedules);
-  app.post('/schedule', createSchedule);
-  app.put('/schedules/:scheduleId/enable', enableSchedule);
-  app.put('/schedules/:scheduleId/disable', disableSchedule);
+  app.get('/purchases', handleListPurchasesRoute);
+  app.get('/schedules/:walletAddress', handleListSchedulesRoute);
+  app.post('/schedule', handleCreateScheduleRoute);
+  app.put('/schedules/:scheduleId/enable', handleEnableScheduleRoute);
+  app.put('/schedules/:scheduleId/disable', handleDisableScheduleRoute);
+  app.delete('/schedules/:scheduleId', handleDeleteScheduleRoute);
 
   serviceLogger.info(`Routes registered`);
 };
