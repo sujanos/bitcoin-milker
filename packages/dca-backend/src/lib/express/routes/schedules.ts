@@ -39,7 +39,7 @@ export const handleCreateScheduleRoute = async (req: Request, res: Response) => 
     const scheduleData = { ...req.body, walletAddress } as CreateScheduleParams;
 
     const { schedule } = await createSchedule(scheduleData);
-    res.status(201).json(schedule.toObject());
+    res.status(201).json({ data: schedule, success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
