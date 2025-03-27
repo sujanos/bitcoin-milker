@@ -14,6 +14,9 @@ dependencies:
   '@lit-protocol/lit-node-client':
     specifier: ^7.0.9
     version: 7.0.9(typescript@5.7.3)
+  '@lit-protocol/types':
+    specifier: ^7.0.9
+    version: 7.0.9
   '@lit-protocol/vincent-sdk':
     specifier: 0.1.1-1
     version: 0.1.1-1

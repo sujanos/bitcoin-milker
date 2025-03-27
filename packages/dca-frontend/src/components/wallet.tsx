@@ -1,4 +1,3 @@
-import { LIT_CHAINS } from '@lit-protocol/constants';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { LogOut, RefreshCcw } from 'lucide-react';
@@ -17,17 +16,17 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { JwtContext } from '@/contexts/jwt';
-
-// TODO move to an useChain hook and app header+context
-const selectedChain = LIT_CHAINS.baseSepolia;
+import { useChain } from '@/hooks/useChain';
 
 export const Wallet: React.FC = () => {
-  const [pkpBalance, setPkpBalance] = useState<string>('0');
+  const { chain, provider, wethContract } = useChain();
+  const [ethBalance, setEthBalance] = useState<string>('0');
+  const [wethBalance, setWethBalance] = useState<string>('0');
   const [isLoadingBalance, setIsLoadingBalance] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { authInfo, logOut } = useContext(JwtContext);
 
-  // Function to fetch PKP balance directly using ethers.js
+  // Function to fetch PKP wethBalanceWei directly using ethers.js
   const fetchPkpBalance = useCallback(async () => {
     if (!authInfo?.pkp.address) return;
 
@@ -35,19 +34,22 @@ export const Wallet: React.FC = () => {
       setIsLoadingBalance(true);
       setError(null);
 
-      const provider = new ethers.providers.JsonRpcProvider(selectedChain.rpcUrls[0]);
+      const [ethBalanceWei, wethBalanceWei] = await Promise.all([
+        provider.getBalance(authInfo?.pkp.address),
+        wethContract.balanceOf(authInfo?.pkp.address),
+      ]);
 
-      const balanceWei = await provider.getBalance(authInfo?.pkp.address);
-      const balanceEth = ethers.utils.formatEther(balanceWei);
+      // Both have 18 decimal places
+      setEthBalance(ethers.utils.formatEther(ethBalanceWei));
+      setWethBalance(ethers.utils.formatEther(wethBalanceWei));
 
-      setPkpBalance(balanceEth);
       setIsLoadingBalance(false);
     } catch (err: unknown) {
-      console.error('Error fetching PKP balance:', err);
+      console.error('Error fetching PKP wethBalanceWei:', err);
       setError(`Failed to fetch wallet balance`);
       setIsLoadingBalance(false);
     }
-  }, [authInfo]);
+  }, [authInfo, provider, wethContract]);
 
   useEffect(() => {
     fetchPkpBalance();
@@ -66,7 +68,7 @@ export const Wallet: React.FC = () => {
           <BoxTitle>Wallet Address:</BoxTitle>
 
           <a
-            href={`${selectedChain.blockExplorerUrls[0]}/address/${authInfo?.pkp.address}`}
+            href={`${chain.blockExplorerUrls[0]}/address/${authInfo?.pkp.address}`}
             target="_blank"
             rel="noopener noreferrer"
             className="underline"
@@ -79,13 +81,13 @@ export const Wallet: React.FC = () => {
 
         <Box className="flex flex-row items-stretch justify-between">
           <BoxDescription>Network:</BoxDescription>
-          <Badge>{selectedChain.name}</Badge>
+          <Badge>{chain.name}</Badge>
         </Box>
 
         <Separator />
 
         <Box className="flex flex-row items-stretch justify-between">
-          <BoxDescription>Balance:</BoxDescription>
+          <BoxDescription>ETH Balance:</BoxDescription>
           <span
             style={{
               fontSize: '20px',
@@ -95,7 +97,20 @@ export const Wallet: React.FC = () => {
           >
             {isLoadingBalance
               ? 'Loading...'
-              : `${parseFloat(pkpBalance).toFixed(4)} ${selectedChain.symbol}`}
+              : `${parseFloat(ethBalance).toFixed(4)} ${chain.symbol}`}
+          </span>
+        </Box>
+
+        <Box className="flex flex-row items-stretch justify-between">
+          <BoxDescription>WETH Balance:</BoxDescription>
+          <span
+            style={{
+              fontSize: '20px',
+              fontWeight: 'bold',
+              color: '#333',
+            }}
+          >
+            {isLoadingBalance ? 'Loading...' : `${parseFloat(wethBalance).toFixed(4)} WETH`}
           </span>
         </Box>
 

@@ -61,13 +61,17 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
   };
 
   return (
-    <Card className="w-full max-w-md bg-white p-6 shadow-sm">
+    <Card className="h-full flex flex-column justify-between bg-white p-6 shadow-sm">
       <form onSubmit={handleCreateDCA}>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Start DCA with Top Base Memecoin</CardTitle>
           <CardDescription className="mt-2 text-gray-600">
-            This system will automatically purchase the top memecoin on Base at regular intervals
-            based on your schedule.
+            This system will automatically purchase the top memecoin using WETH on Base at regular
+            intervals based on your schedule.
+            <br />
+            <br />
+            Fund your wallet with Base WETH and ETH to start. Without it, your transactions will not
+            execute or even fail.
           </CardDescription>
         </CardHeader>
 
@@ -81,6 +85,7 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
               </Label>
               <div className="flex items-center space-x-2">
                 <Input
+                  required
                   className="text-center"
                   type="number"
                   step="0.01"
@@ -100,7 +105,7 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
               <Label htmlFor="frequency" className="mb-1 block text-sm font-medium">
                 Frequency
               </Label>
-              <Select value={frequency} onValueChange={setFrequency} disabled={loading}>
+              <Select required value={frequency} onValueChange={setFrequency} disabled={loading}>
                 <SelectTrigger id="frequency" className="w-full">
                   <SelectValue placeholder="Select frequency" />
                 </SelectTrigger>

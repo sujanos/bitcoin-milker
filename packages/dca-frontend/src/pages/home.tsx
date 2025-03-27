@@ -8,7 +8,7 @@ import { Wallet } from '@/components/wallet';
 enum Tab {
   CreateDCA = 'create-dca',
   ActiveDCAs = 'active-dcas',
-  Wallet = 'balance',
+  Wallet = 'wallet',
 }
 
 export const Home: React.FC = () => {
@@ -23,18 +23,18 @@ export const Home: React.FC = () => {
         className="bg-white p-6 shadow-sm min-w-1/2 min-h-3/4"
       >
         <TabsList className="mb-4 flex space-x-2 rounded-md bg-gray-200 p-2 w-full">
-          <TabsTrigger value="create-dca">Create DCA</TabsTrigger>
-          <TabsTrigger value="active-dcas">Active DCAs</TabsTrigger>
-          <TabsTrigger value="balance">Wallet</TabsTrigger>
+          <TabsTrigger value={Tab.CreateDCA}>Create DCA</TabsTrigger>
+          <TabsTrigger value={Tab.ActiveDCAs}>Active DCAs</TabsTrigger>
+          <TabsTrigger value={Tab.Wallet}>Wallet</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="create-dca">
+        <TabsContent value={Tab.CreateDCA}>
           <CreateDCA onCreate={() => setActiveTab(Tab.ActiveDCAs)} />
         </TabsContent>
-        <TabsContent value="active-dcas">
+        <TabsContent value={Tab.ActiveDCAs}>
           <ActiveDcas />
         </TabsContent>
-        <TabsContent value="balance">
+        <TabsContent value={Tab.Wallet}>
           <Wallet />
         </TabsContent>
       </Tabs>
