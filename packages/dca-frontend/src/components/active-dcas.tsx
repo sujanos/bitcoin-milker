@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Pause, Pencil, Play } from 'lucide-react';
 
 import { useBackend, DCA } from '@/hooks/useBackend';
+import { Box } from '@/components/ui/box';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -15,7 +17,7 @@ import {
 
 export const ActiveDcas: React.FC = () => {
   const [activeDCAs, setActiveDCAs] = useState<DCA[]>([]);
-  const { getDCAs } = useBackend();
+  const { disableDCA, enableDCA, getDCAs } = useBackend();
 
   useEffect(() => {
     const fetchDCAs = async () => {
@@ -28,6 +30,38 @@ export const ActiveDcas: React.FC = () => {
     };
     fetchDCAs();
   }, [getDCAs]);
+
+  const handleDisableDCA = useCallback(
+    async (dcaId: string) => {
+      try {
+        await disableDCA(dcaId);
+
+        const updatedDCAs = [...activeDCAs];
+        const index = updatedDCAs.findIndex((dca) => dca._id === dcaId);
+        updatedDCAs[index].active = false;
+        setActiveDCAs(updatedDCAs);
+      } catch (error) {
+        console.error('Error disabling DCA:', error);
+      }
+    },
+    [activeDCAs, disableDCA, setActiveDCAs]
+  );
+
+  const handleEableDCA = useCallback(
+    async (dcaId: string) => {
+      try {
+        await enableDCA(dcaId);
+
+        const updatedDCAs = [...activeDCAs];
+        const index = updatedDCAs.findIndex((dca) => dca._id === dcaId);
+        updatedDCAs[index].active = true;
+        setActiveDCAs(updatedDCAs);
+      } catch (error) {
+        console.error('Error disabling DCA:', error);
+      }
+    },
+    [activeDCAs, enableDCA, setActiveDCAs]
+  );
 
   if (!activeDCAs.length) {
     return (
@@ -64,24 +98,26 @@ export const ActiveDcas: React.FC = () => {
               return (
                 <TableRow key={uniqueKey}>
                   <TableCell>${dca.purchaseAmount}</TableCell>
-                  <TableCell>
-                    {/*{formatFrequency(dca.frequency)}*/}
-                    Daily
-                  </TableCell>
+                  <TableCell>{dca.purchaseIntervalHuman}</TableCell>
                   <TableCell>{new Date(dca.updatedAt).toLocaleString()}</TableCell>
                   <TableCell>
                     <span>{dca.active ? 'Active' : 'Inactive'}</span>
                   </TableCell>
                   <TableCell>
-                    <Button variant={'outline'} onClick={() => console.log('TODO change status')}>
-                      Edit
-                    </Button>
-                    <Button
-                      variant={dca.active ? 'destructive' : 'default'}
-                      onClick={() => console.log('TODO change status')}
-                    >
-                      {dca.active ? 'Deactivate' : 'Activate'}
-                    </Button>
+                    <Box className="flex flex-row items-center justify-center gap-2 p-1">
+                      <Button variant="outline" onClick={() => console.log('TODO change status')}>
+                        <Pencil />
+                      </Button>
+                      {dca.active ? (
+                        <Button variant="destructive" onClick={() => handleDisableDCA(dca._id)}>
+                          <Pause />
+                        </Button>
+                      ) : (
+                        <Button variant="default" onClick={() => handleEableDCA(dca._id)}>
+                          <Play />
+                        </Button>
+                      )}
+                    </Box>
                   </TableCell>
                 </TableRow>
               );

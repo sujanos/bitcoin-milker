@@ -50,8 +50,12 @@ export const handleDisableScheduleRoute = async (req: Request, res: Response) =>
     const { scheduleId } = req.params as { scheduleId: string };
 
     const job = await disableJob({ scheduleId: new Types.ObjectId(scheduleId) });
+    if (!job) {
+      res.status(404).json({ error: 'Job not found' });
+      return;
+    }
 
-    res.json({ data: job, success: true });
+    res.json({ data: job.toJson(), success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
@@ -63,7 +67,7 @@ export const handleEnableScheduleRoute = async (req: Request, res: Response) => 
 
     const job = await enableJob({ scheduleId: new Types.ObjectId(scheduleId) });
 
-    res.json({ data: job, success: true });
+    res.json({ data: job.toJson(), success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }

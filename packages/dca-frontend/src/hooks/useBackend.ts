@@ -72,9 +72,25 @@ export const useBackend = () => {
     return sendRequest<DCA[]>('/schedules', 'GET');
   }, [sendRequest]);
 
+  const disableDCA = useCallback(
+    async (scheduleId: string) => {
+      return sendRequest<DCA>(`/schedules/${scheduleId}/disable`, 'PUT');
+    },
+    [sendRequest]
+  );
+
+  const enableDCA = useCallback(
+    async (scheduleId: string) => {
+      return sendRequest<DCA>(`/schedules/${scheduleId}/enable`, 'PUT');
+    },
+    [sendRequest]
+  );
+
   return {
     getJwt,
     createDCA,
     getDCAs,
+    disableDCA,
+    enableDCA,
   };
 };
