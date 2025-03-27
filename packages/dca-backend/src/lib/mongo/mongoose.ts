@@ -9,7 +9,7 @@ import { serviceLogger } from '../logger';
  * @returns A promise that resolves when connected successfully
  */
 export async function connectToMongoDB(mongoUri: string): Promise<mongoose.Connection> {
-  serviceLogger.info('Connecting to MongoDB...');
+  serviceLogger.info(`Connecting to MongoDB @ ${mongoUri}`);
 
   await mongoose.connect(mongoUri);
   serviceLogger.info('Connected to MongoDB');
