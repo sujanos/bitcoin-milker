@@ -44,7 +44,6 @@
     "zod": "^3.22.4"
   },
   "dependencies": {
-    "consola": "^3.2.3",
-    "dca-backend": "workspace:*"
+    "consola": "^3.2.3"
   }
 }

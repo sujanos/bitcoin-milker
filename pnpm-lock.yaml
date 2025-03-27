@@ -11,9 +11,6 @@ importers:
       consola:
         specifier: ^3.2.3
         version: 3.4.2
-      dca-backend:
-        specifier: workspace:*
-        version: link:packages/dca-backend
     devDependencies:
       '@dotenvx/dotenvx':
         specifier: ^0.26.0
