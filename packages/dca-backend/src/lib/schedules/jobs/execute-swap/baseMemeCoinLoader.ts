@@ -1,3 +1,4 @@
+import consola from 'consola';
 import DataLoader from 'dataloader';
 import Cache from 'node-cache';
 
@@ -8,6 +9,8 @@ const cache = new Cache({ checkperiod: 0, stdTTL: 5, useClones: false });
 
 const { COINRANKING_API_KEY } = env;
 
+const logger = consola.withTag('CoinRankingLoader');
+
 export interface Coin {
   coinAddress: string;
   name: string;
@@ -16,11 +19,17 @@ export interface Coin {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function batchLoadFn(keys: readonly string[]): Promise<ArrayLike<Coin | Error>> {
+async function batchLoadFn(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  keys: readonly string[]
+): Promise<{ coins: ArrayLike<Coin | Error> }[]> {
+  logger.debug('batchLoadFn()');
+
   const url = new URL('https://api.coinranking.com/v2/coins');
   url.searchParams.append('blockchains[]', 'base');
   url.searchParams.append('tags[]', 'meme');
 
+  logger.info(`Fetching top coins from CoinRanking API: ${url.toString()}`);
   const response = await fetch(url, {
     headers: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -48,7 +57,7 @@ async function batchLoadFn(keys: readonly string[]): Promise<ArrayLike<Coin | Er
     throw new Error('API returned unsuccessful status');
   }
 
-  return data.coins.map((coin) => {
+  const coins = data.coins.map((coin) => {
     const baseAddress = coin.contractAddresses.find((addr) =>
       addr.toLowerCase().startsWith('base/')
     );
@@ -64,13 +73,18 @@ async function batchLoadFn(keys: readonly string[]): Promise<ArrayLike<Coin | Er
       symbol: coin.symbol,
     };
   });
+
+  return [{ coins }];
 }
 
 const loader = new DataLoader(batchLoadFn, {
-  cacheMap: wrapNodeCacheForDataloader<Coin>(cache),
+  cacheMap: wrapNodeCacheForDataloader<{ coins: Coin[] }>(cache),
 });
 
 export const getTopBaseMemeCoin = async () => {
-  const topCoins = (await loader.load('topCoins')) as unknown as Coin[];
+  logger.debug(`getTopBaseMemeCoin()`);
+
+  const topCoins = (await loader.load('topCoins')).coins;
+  logger.debug(`topCoins: ${JSON.stringify(topCoins)}`);
   return topCoins[0];
 };

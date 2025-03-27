@@ -1,4 +1,4 @@
-import { Job } from 'agenda';
+import { Job } from '@whisthub/agenda';
 
 import { createAgenda, getAgenda } from './agendaClient';
 import { executeSwap } from './jobs';

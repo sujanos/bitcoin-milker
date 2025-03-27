@@ -1,93 +1,81 @@
-import consola from 'consola';
 import { Request, Response } from 'express';
+import { Types } from 'mongoose';
 
-import { Schedule } from '../../mongo/models/Schedule';
+import { disableJob, enableJob } from '../../scheduleManager/jobs';
+import { createSchedule, deleteSchedule, listSchedules } from '../../scheduleManager/schedules';
+import { CreateScheduleParams } from '../../types';
 
-export const getSchedules = async (req: Request, res: Response) => {
-  const walletAddress = req.user?.pkp.address;
-  if (!walletAddress) {
-    res.status(400).json({ error: 'No wallet address provided' });
-    return;
-  }
-
-  const schedules = await Schedule.find({ walletAddress }).lean();
-
-  if (!schedules || schedules.length === 0) {
-    res.status(404).json({
-      error: `No DCA schedules found for wallet address ${walletAddress}`,
-    });
-  }
-
-  res.json({ data: schedules, success: true });
-};
-
-export const createSchedule = async (req: Request, res: Response) => {
-  const walletAddress = req.user?.pkp.address;
-  if (!walletAddress) {
-    res.status(400).json({ error: 'No wallet address provided' });
-    return;
-  }
-
-  const scheduleData = req.body as {
-    purchaseAmount: string;
-    purchaseIntervalHuman: number;
-  };
-
-  // Delete ALL existing schedules for this wallet address
-  const deleteResult = await Schedule.deleteMany({ walletAddress });
-
-  if (deleteResult.deletedCount > 0) {
-    consola.info(
-      `Deleted ${deleteResult.deletedCount} existing DCA schedule(s) for wallet ${walletAddress}`
-    );
-  }
-
-  // Create a new schedule
-  const schedule = new Schedule({
-    ...scheduleData,
-    walletAddress,
-  });
-
-  await schedule.save();
-  res.status(201).json({ data: schedule, success: true });
-};
-
-export const disableSchedule = async (req: Request, res: Response) => {
-  const { scheduleId: _id } = req.params as { scheduleId: string };
-
-  const result = await Schedule.findOneAndUpdate(
-    { _id },
-    { active: false },
-    {
-      new: true,
+export const handleListSchedulesRoute = async (req: Request, res: Response) => {
+  try {
+    const walletAddress = req.user?.pkp.address;
+    if (!walletAddress) {
+      res.status(400).json({ error: 'No wallet address provided' });
+      return;
     }
-  );
 
-  if (!result) {
-    res.status(404).json({
-      error: `No DCA schedule found with ID ${_id}`,
-    });
+    const schedules = await listSchedules({ walletAddress });
+
+    if (!schedules || schedules.length === 0) {
+      res.status(404).json({
+        error: `No DCA schedules found for wallet address ${walletAddress}`,
+      });
+      return;
+    }
+
+    res.json({ data: schedules, success: true });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
   }
-
-  res.json({ data: result, success: true });
 };
 
-export const enableSchedule = async (req: Request, res: Response) => {
-  const { scheduleId: _id } = req.params as { scheduleId: string };
-
-  const result = await Schedule.findOneAndUpdate(
-    { _id },
-    { active: true },
-    {
-      new: true,
+export const handleCreateScheduleRoute = async (req: Request, res: Response) => {
+  try {
+    const walletAddress = req.user?.pkp.address;
+    if (!walletAddress) {
+      res.status(400).json({ error: 'No wallet address provided' });
+      return;
     }
-  );
 
-  if (!result) {
-    res.status(404).json({
-      error: `No DCA schedule found with ID ${_id}`,
-    });
+    const scheduleData = { ...req.body, walletAddress } as CreateScheduleParams;
+
+    const { schedule } = await createSchedule(scheduleData);
+    res.status(201).json(schedule.toObject());
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
   }
+};
 
-  res.json({ data: result, success: true });
+export const handleDisableScheduleRoute = async (req: Request, res: Response) => {
+  try {
+    const { scheduleId } = req.params as { scheduleId: string };
+
+    const job = await disableJob({ scheduleId: new Types.ObjectId(scheduleId) });
+
+    res.json({ data: job, success: true });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+export const handleEnableScheduleRoute = async (req: Request, res: Response) => {
+  try {
+    const { scheduleId } = req.params as { scheduleId: string };
+
+    const job = await enableJob({ scheduleId: new Types.ObjectId(scheduleId) });
+
+    res.json({ data: job, success: true });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+export const handleDeleteScheduleRoute = async (req: Request, res: Response) => {
+  try {
+    const { scheduleId } = req.params as { scheduleId: string };
+    await deleteSchedule({ scheduleId: new Types.ObjectId(scheduleId) });
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 };

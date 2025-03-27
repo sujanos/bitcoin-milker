@@ -9,7 +9,7 @@ import {
 } from '@lit-protocol/auth-helpers';
 import { LIT_ABILITY, LIT_NETWORK, LIT_RPC } from '@lit-protocol/constants';
 
-import { getTopBaseMemeCoin } from './baseMemeCoinLoader';
+import { Coin, getTopBaseMemeCoin } from './baseMemeCoinLoader';
 import { getEthereumPriceUsd } from './ethPriceLoader';
 import { env } from '../../../env';
 import { getLitContractsInstance } from '../../../LitContracts/getLitContracts';
@@ -36,7 +36,7 @@ export type CapacityToken = {
 async function executeSwap({ scheduleId }: ExecuteSwapParams): Promise<void> {
   // Fetch top coin first to get the target token
   consola.debug('Fetching top coin...');
-  const topCoin = await getTopBaseMemeCoin();
+  const topCoin = (await getTopBaseMemeCoin()) as unknown as Coin;
   consola.debug('Got top coin:', topCoin);
 
   const ethPriceUsd = await getEthereumPriceUsd();
@@ -68,6 +68,7 @@ async function executeSwap({ scheduleId }: ExecuteSwapParams): Promise<void> {
   const totalRequiredWei = purchaseAmountWei.add(estimatedGasFee);
   const totalRequiredUsd = purchaseAmountUsd + estimatedGasFeeUsd;
 
+  consola.info('Balance: ', userBalanceEth.toFixed(6), 'ETH ($', userBalanceUsd.toFixed(2), 'USD');
   if (userWalletBalance.lt(totalRequiredWei)) {
     consola.error(
       `Insufficient balance in user wallet ${walletAddress}: ` +

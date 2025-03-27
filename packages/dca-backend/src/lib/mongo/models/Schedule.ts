@@ -2,16 +2,9 @@ import { Schema, model } from 'mongoose';
 
 // This may seem like a very verbose file with excess local variables, but getting type inference to work with mongoose is extremely finicky.
 const scheduleSchemaDefinition = {
-  active: {
-    default: true,
-    index: true,
+  name: {
     required: true,
-    type: Boolean, // Index for faster queries on active status
-  },
-  enabledAt: {
-    default: Date.now,
-    required: true,
-    type: Date,
+    type: String,
   },
   purchaseAmount: {
     required: true,
@@ -44,9 +37,5 @@ const scheduleSchemaDefinition = {
 } as const;
 
 export const ScheduleSchema = new Schema(scheduleSchemaDefinition, { timestamps: true });
-
-// Create compound indices for common query patterns
-ScheduleSchema.index({ active: 1, walletAddress: 1 });
-ScheduleSchema.index({ enabledAt: 1, walletAddress: 1 });
 
 export const Schedule = model('Schedule', ScheduleSchema);

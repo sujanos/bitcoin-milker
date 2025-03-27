@@ -1,0 +1,3 @@
+GET http://localhost:3000/schedules/{{walletAddress}}
+Authorization: Bearer YOUR_AUTH_TOKEN
+
