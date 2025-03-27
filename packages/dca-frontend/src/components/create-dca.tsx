@@ -105,11 +105,11 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
                   <SelectValue placeholder="Select frequency" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="minute">Every minute</SelectItem>
-                  <SelectItem value="hourly">Hourly</SelectItem>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="1 minute">Every minute</SelectItem>
+                  <SelectItem value="1 hour">Hourly</SelectItem>
+                  <SelectItem value="1 day">Daily</SelectItem>
+                  <SelectItem value="1 week">Weekly</SelectItem>
+                  <SelectItem value="1 month">Monthly</SelectItem>
                 </SelectContent>
               </Select>
             </Box>
