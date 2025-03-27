@@ -1,6 +1,7 @@
 import cors from 'cors';
 import express, { Express } from 'express';
 
+import { authenticateUser } from './auth';
 import { listPurchases } from './purchases';
 import { getSchedules, enableSchedule, disableSchedule, createSchedule } from './schedules';
 import { env } from '../../env';
@@ -44,11 +45,11 @@ export const registerRoutes = (app: Express) => {
   }
   app.use(cors(corsConfig));
 
-  app.get('/purchases', listPurchases);
-  app.get('/schedules', getSchedules);
-  app.post('/schedule', createSchedule);
-  app.put('/schedules/:scheduleId/enable', enableSchedule);
-  app.put('/schedules/:scheduleId/disable', disableSchedule);
+  app.get('/purchases', authenticateUser, listPurchases);
+  app.get('/schedules', authenticateUser, getSchedules);
+  app.post('/schedule', authenticateUser, createSchedule);
+  app.put('/schedules/:scheduleId/enable', authenticateUser, enableSchedule);
+  app.put('/schedules/:scheduleId/disable', authenticateUser, disableSchedule);
 
   serviceLogger.info(`Routes registered`);
 };

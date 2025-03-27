@@ -4,7 +4,12 @@ import { Request, Response } from 'express';
 import { Schedule } from '../../mongo/models/Schedule';
 
 export const getSchedules = async (req: Request, res: Response) => {
-  const { walletAddress } = req.params as { walletAddress?: string };
+  const walletAddress = req.user?.pkp.address;
+  if (!walletAddress) {
+    res.status(400).json({ error: 'No wallet address provided' });
+    return;
+  }
+
   const schedules = await Schedule.find({ walletAddress }).lean();
 
   if (!schedules || schedules.length === 0) {
@@ -17,30 +22,34 @@ export const getSchedules = async (req: Request, res: Response) => {
 };
 
 export const createSchedule = async (req: Request, res: Response) => {
+  const walletAddress = req.user?.pkp.address;
+  if (!walletAddress) {
+    res.status(400).json({ error: 'No wallet address provided' });
+    return;
+  }
+
   const scheduleData = req.body as {
     purchaseAmount: string;
-    purchaseIntervalSeconds: number;
-    walletAddress: string;
+    purchaseIntervalHuman: number;
   };
 
   // Delete ALL existing schedules for this wallet address
-  const deleteResult = await Schedule.deleteMany({
-    walletAddress: scheduleData.walletAddress,
-  });
+  const deleteResult = await Schedule.deleteMany({ walletAddress });
 
   if (deleteResult.deletedCount > 0) {
     consola.info(
-      `Deleted ${deleteResult.deletedCount} existing DCA schedule(s) for wallet ${scheduleData.walletAddress}`
+      `Deleted ${deleteResult.deletedCount} existing DCA schedule(s) for wallet ${walletAddress}`
     );
   }
 
   // Create a new schedule
   const schedule = new Schedule({
     ...scheduleData,
+    walletAddress,
   });
 
   await schedule.save();
-  res.status(201).json(schedule.toObject());
+  res.status(201).json({ data: schedule, success: true });
 };
 
 export const disableSchedule = async (req: Request, res: Response) => {
