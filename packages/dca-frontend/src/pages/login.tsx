@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Presentation } from '@/components/presentation.tsx';
+import { Presentation } from '@/components/presentation';
 
 export const Login: React.FC = () => {
   return (
