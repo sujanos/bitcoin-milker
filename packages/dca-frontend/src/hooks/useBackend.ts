@@ -6,6 +6,7 @@ import { JwtContext } from '@/contexts/jwt';
 type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 export interface DCARequest {
+  name: string;
   purchaseAmount: string;
   purchaseIntervalHuman: string;
 }

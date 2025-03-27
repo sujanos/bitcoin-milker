@@ -28,6 +28,7 @@ export interface CreateDCAProps {
 
 export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [name] = useState<string>('name');
   const [purchaseAmount, setPurchaseAmount] = useState<string>('1.00');
   const [frequency, setFrequency] = useState<string>('weekly');
   const { createDCA } = useBackend();
@@ -46,6 +47,7 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
     setLoading(true);
     try {
       await createDCA({
+        name,
         purchaseAmount,
         purchaseIntervalHuman: frequency,
       });
