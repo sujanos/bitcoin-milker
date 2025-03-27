@@ -7,7 +7,8 @@
     "test": "pnpm jest",
     "lint": "pnpm eslint ./src",
     "build": "node esbuild.mjs",
-    "dev": "pnpm dotenvx run -- pnpm bun --watch ./src/bin/server.ts"
+    "dev": "pnpm dotenvx run -- pnpm bun --watch ./src/bin/server.ts",
+    "start": "node ./dist/server.cjs"
   },
   "repository": {
     "type": "git",
