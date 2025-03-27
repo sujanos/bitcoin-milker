@@ -1,0 +1,29 @@
+{
+  "extends": ["@tsconfig/node20/tsconfig.json","../../tsconfig.base.json"],
+  "include": ["src/**/*.tsx", "src/*.tsx"],
+  "strictNullChecks": true,
+  "allowJs": true,
+  "types": ["jest", "node"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "outDir": "./dist"
+  }
+}
