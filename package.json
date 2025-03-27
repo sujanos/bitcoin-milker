@@ -6,7 +6,7 @@
   "homepage": "https://github.com/LIT-protocol/vincent-dca",
   "engines": {
     "node": "^20.11.1",
-    "pnpm": "8.15.5"
+    "pnpm": "10.7.0"
   },
   "type": "module",
   "scripts": {
@@ -15,9 +15,10 @@
     "clean": "pnpm exec rm -Rf node_modules dist && pnpm --parallel -r run clean",
     "test": "pnpm -r run test",
     "dev": "pnpm build && pnpm -r run dev",
-    "prepare": "husky"
+    "prepare": "husky",
+    "start": "pnpm -r run start"
   },
-  "packageManager": "pnpm@8.15.5",
+  "packageManager": "pnpm@10.7.0",
   "keywords": [],
   "devDependencies": {
     "@dotenvx/dotenvx": "^0.26.0",
