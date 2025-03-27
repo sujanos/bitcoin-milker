@@ -23,7 +23,7 @@ module.exports = {
       },
     ],
   },
-  ignorePatterns: ['esbuild.mjs', '.eslintrc.cjs'],
+  ignorePatterns: ['.eslintrc.cjs'],
   overrides: [
     {
       files: ['test.spec.ts'],
