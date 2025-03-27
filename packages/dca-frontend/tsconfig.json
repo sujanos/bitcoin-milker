@@ -1,5 +1,5 @@
 {
-  "extends": ["@tsconfig/node20/tsconfig.json","../../tsconfig.base.json"],
+  "extends": ["../../tsconfig.base.json"],
   "include": ["src/**/*.tsx", "src/*.tsx", "vite-env.d.ts"],
   "strictNullChecks": true,
   "allowJs": true,
