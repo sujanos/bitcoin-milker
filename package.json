@@ -6,18 +6,19 @@
   "homepage": "https://github.com/LIT-protocol/vincent-dca",
   "engines": {
     "node": "^20.11.1",
-    "pnpm": "8.15.5"
+    "pnpm": "10.7.0"
   },
   "type": "module",
   "scripts": {
     "build": "pnpm -r run build",
-    "lint": "pnpm eslint .",
+    "lint": "pnpm -r lint",
     "clean": "pnpm exec rm -Rf node_modules dist && pnpm --parallel -r run clean",
     "test": "pnpm -r run test",
     "dev": "pnpm build && pnpm -r run dev",
-    "prepare": "husky"
+    "prepare": "husky",
+    "start": "pnpm -r run start"
   },
-  "packageManager": "pnpm@8.15.5",
+  "packageManager": "pnpm@10.7.0",
   "keywords": [],
   "devDependencies": {
     "@dotenvx/dotenvx": "^0.26.0",
@@ -30,7 +31,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^18.0.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-chai-friendly": "^0.7.4",
+    "eslint-import-resolver-typescript": "^4.2.3",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-sort-destructure-keys": "^1.5.0",
     "eslint-plugin-sort-keys-plus": "^1.4.0",

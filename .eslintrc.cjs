@@ -6,9 +6,9 @@ module.exports = {
   root: true,
   env: { node: true },
   parserOptions: {
-    project: './tsconfig.json',
+    project: true,
   },
-  plugins: ['import', 'chai-friendly', 'sort-destructure-keys', 'sort-keys-plus'],
+  plugins: ['import', 'sort-destructure-keys', 'sort-keys-plus'],
   overrides: [
     {
       files: ['*.ts', '*.tsx', '*.js', '*.jsx'],
@@ -18,14 +18,16 @@ module.exports = {
         'airbnb-typescript/base',
         'plugin:import/recommended',
         'plugin:import/typescript',
-        'plugin:chai-friendly/recommended',
         'plugin:typescript-sort-keys/recommended',
         'prettier',
       ],
       settings: {
         'import/resolver': {
           node: {
-            extensions: ['.js', '.jsx', '.ts', '.tsx'],
+            extensions: ['.js', '.jsx'],
+          },
+          typescript: {
+            extensions: ['.ts', '.tsx'],
           },
         },
         'import/internal-regex': '^@lit-protocol/',
@@ -41,6 +43,7 @@ module.exports = {
         'import/no-relative-packages': ['error'],
         'import/no-duplicates': ['error'],
         'import/no-unresolved': ['error'],
+        'import/no-extraneous-dependencies': ['off'],
         'import/order': [
           'error',
           {
