@@ -2,12 +2,22 @@ import { Request, Response } from 'express';
 import { Types } from 'mongoose';
 
 import { disableJob, enableJob } from '../../scheduleManager/jobs';
-import { createSchedule, deleteSchedule, listSchedules } from '../../scheduleManager/schedules';
-import { CreateScheduleParams } from '../../types';
+import {
+  createSchedule,
+  deleteSchedule,
+  editSchedule,
+  listSchedules,
+} from '../../scheduleManager/schedules';
+import { CreateScheduleParams, EditScheduleParams } from '../../types';
+
+function getWalletAddressFromRequest(req: Request): string | undefined {
+  return req.user?.pkp.address;
+}
 
 export const handleListSchedulesRoute = async (req: Request, res: Response) => {
   try {
-    const walletAddress = req.user?.pkp.address;
+    const walletAddress = getWalletAddressFromRequest(req);
+
     if (!walletAddress) {
       res.status(400).json({ error: 'No wallet address provided' });
       return;
@@ -30,7 +40,8 @@ export const handleListSchedulesRoute = async (req: Request, res: Response) => {
 
 export const handleCreateScheduleRoute = async (req: Request, res: Response) => {
   try {
-    const walletAddress = req.user?.pkp.address;
+    const walletAddress = getWalletAddressFromRequest(req);
+
     if (!walletAddress) {
       res.status(400).json({ error: 'No wallet address provided' });
       return;
@@ -45,9 +56,34 @@ export const handleCreateScheduleRoute = async (req: Request, res: Response) => 
   }
 };
 
+export const handleEditScheduleRoute = async (req: Request, res: Response) => {
+  try {
+    const walletAddress = getWalletAddressFromRequest(req);
+    const { scheduleId } = req.params as { scheduleId: string };
+
+    if (!walletAddress) {
+      res.status(400).json({ error: 'No wallet address provided' });
+      return;
+    }
+
+    const scheduleData = { ...req.body, scheduleId, walletAddress } as EditScheduleParams;
+
+    const { schedule } = await editSchedule(scheduleData);
+    res.status(201).json({ data: schedule, success: true });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
 export const handleDisableScheduleRoute = async (req: Request, res: Response) => {
   try {
+    const walletAddress = getWalletAddressFromRequest(req);
     const { scheduleId } = req.params as { scheduleId: string };
+
+    if (!walletAddress) {
+      res.status(400).json({ error: 'No wallet address provided' });
+      return;
+    }
 
     const job = await disableJob({ scheduleId: new Types.ObjectId(scheduleId) });
     if (!job) {
@@ -63,7 +99,13 @@ export const handleDisableScheduleRoute = async (req: Request, res: Response) =>
 
 export const handleEnableScheduleRoute = async (req: Request, res: Response) => {
   try {
+    const walletAddress = getWalletAddressFromRequest(req);
     const { scheduleId } = req.params as { scheduleId: string };
+
+    if (!walletAddress) {
+      res.status(400).json({ error: 'No wallet address provided' });
+      return;
+    }
 
     const job = await enableJob({ scheduleId: new Types.ObjectId(scheduleId) });
 
@@ -75,7 +117,14 @@ export const handleEnableScheduleRoute = async (req: Request, res: Response) => 
 
 export const handleDeleteScheduleRoute = async (req: Request, res: Response) => {
   try {
+    const walletAddress = getWalletAddressFromRequest(req);
     const { scheduleId } = req.params as { scheduleId: string };
+
+    if (!walletAddress) {
+      res.status(400).json({ error: 'No wallet address provided' });
+      return;
+    }
+
     await deleteSchedule({ scheduleId: new Types.ObjectId(scheduleId) });
 
     res.json({ success: true });

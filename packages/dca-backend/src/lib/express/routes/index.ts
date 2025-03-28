@@ -9,6 +9,7 @@ import {
   handleDisableScheduleRoute,
   handleCreateScheduleRoute,
   handleDeleteScheduleRoute,
+  handleEditScheduleRoute,
 } from './schedules';
 import { env } from '../../env';
 import { serviceLogger } from '../../logger';
@@ -54,6 +55,7 @@ export const registerRoutes = (app: Express) => {
   app.get('/purchases', authenticateUser, handleListPurchasesRoute);
   app.get('/schedules', authenticateUser, handleListSchedulesRoute);
   app.post('/schedule', authenticateUser, handleCreateScheduleRoute);
+  app.put('/schedules/:scheduleId', authenticateUser, handleEditScheduleRoute);
   app.put('/schedules/:scheduleId/enable', authenticateUser, handleEnableScheduleRoute);
   app.put('/schedules/:scheduleId/disable', authenticateUser, handleDisableScheduleRoute);
   app.delete('/schedules/:scheduleId', authenticateUser, handleDeleteScheduleRoute);

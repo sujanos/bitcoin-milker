@@ -11,16 +11,9 @@ import {
   CardContent,
   CardFooter,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { DEFAULT_VALUE, InputAmount } from '@/components/input-amount';
+import { FREQUENCIES, SelectFrequency } from '@/components/select-frequency';
 
 export interface CreateDCAProps {
   onCreate?: () => void;
@@ -29,8 +22,8 @@ export interface CreateDCAProps {
 export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [name] = useState<string>('name');
-  const [purchaseAmount, setPurchaseAmount] = useState<string>('1.00');
-  const [frequency, setFrequency] = useState<string>('weekly');
+  const [purchaseAmount, setPurchaseAmount] = useState<string>(DEFAULT_VALUE);
+  const [frequency, setFrequency] = useState<string>(FREQUENCIES[0].value);
   const { createDCA } = useBackend();
 
   const handleCreateDCA = async (event: FormEvent<HTMLFormElement>) => {
@@ -44,8 +37,8 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
       return;
     }
 
-    setLoading(true);
     try {
+      setLoading(true);
       await createDCA({
         name,
         purchaseAmount,
@@ -78,47 +71,23 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
         <Separator className="my-8" />
 
         <CardContent className="my-8">
-          <div className="space-y-4">
-            <Box className="py-0 gap-0 text-center">
-              <Label htmlFor="dcaAmount" className="mb-1 block text-sm font-medium">
-                DCA Amount
-              </Label>
-              <div className="flex items-center space-x-2">
-                <Input
-                  required
-                  className="text-center"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="100.00"
-                  value={purchaseAmount}
-                  onChange={(e) => setPurchaseAmount(e.target.value)}
-                  disabled={loading}
-                />
-                <span className="text-sm">USD</span>
-              </div>
-            </Box>
+          <Box className="space-y-4">
+            <InputAmount
+              required
+              value={purchaseAmount}
+              onChange={setPurchaseAmount}
+              disabled={loading}
+            />
 
             <Separator />
 
-            <Box className="py-0 gap-0 text-center">
-              <Label htmlFor="frequency" className="mb-1 block text-sm font-medium">
-                Frequency
-              </Label>
-              <Select required value={frequency} onValueChange={setFrequency} disabled={loading}>
-                <SelectTrigger id="frequency" className="w-full">
-                  <SelectValue placeholder="Select frequency" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1 minute">Every minute</SelectItem>
-                  <SelectItem value="1 hour">Hourly</SelectItem>
-                  <SelectItem value="1 day">Daily</SelectItem>
-                  <SelectItem value="1 week">Weekly</SelectItem>
-                  <SelectItem value="1 month">Monthly</SelectItem>
-                </SelectContent>
-              </Select>
-            </Box>
-          </div>
+            <SelectFrequency
+              required
+              value={frequency}
+              onChange={setFrequency}
+              disabled={loading}
+            />
+          </Box>
         </CardContent>
 
         <Separator className="my-8" />

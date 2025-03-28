@@ -5,19 +5,16 @@ import { JwtContext } from '@/contexts/jwt';
 
 type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
-export interface DCARequest {
+export interface CreateDCARequest {
   name: string;
   purchaseAmount: string;
   purchaseIntervalHuman: string;
 }
 
-export interface DCA extends DCARequest {
+export interface DCA extends CreateDCARequest {
   _id: string;
   active: boolean;
-  // walletAddress: string;
   enabledAt: string;
-  // userEditedAt: string;
-  // createdAt: string;
   updatedAt: string;
 }
 
@@ -62,7 +59,7 @@ export const useBackend = () => {
   );
 
   const createDCA = useCallback(
-    async (dca: DCARequest) => {
+    async (dca: CreateDCARequest) => {
       return sendRequest<DCA>('/schedule', 'POST', dca);
     },
     [sendRequest]
@@ -86,11 +83,27 @@ export const useBackend = () => {
     [sendRequest]
   );
 
+  const editDCA = useCallback(
+    async (scheduleId: string, dca: CreateDCARequest) => {
+      return sendRequest<DCA>(`/schedules/${scheduleId}`, 'PUT', dca);
+    },
+    [sendRequest]
+  );
+
+  const deleteDCA = useCallback(
+    async (scheduleId: string) => {
+      return sendRequest<DCA>(`/schedules/${scheduleId}`, 'DELETE');
+    },
+    [sendRequest]
+  );
+
   return {
-    getJwt,
     createDCA,
-    getDCAs,
+    deleteDCA,
     disableDCA,
+    editDCA,
     enableDCA,
+    getDCAs,
+    getJwt,
   };
 };
