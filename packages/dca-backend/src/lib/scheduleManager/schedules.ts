@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 import { Schedule } from '../mongo/models/Schedule';
 import { getAgenda } from '../schedules/agendaClient';
 import { executeSwap } from '../schedules/jobs';
-import { CreateScheduleParams, DeleteScheduleParams } from '../types';
+import { CreateScheduleParams, DeleteScheduleParams, EditScheduleParams } from '../types';
 import { cancelJob, findJob, scheduleJob } from './jobs';
 
 const logger = consola.withTag('ScheduleManager');
@@ -62,6 +62,47 @@ export const createSchedule = async (params: CreateScheduleParams) => {
   );
 
   return { job, schedule };
+};
+export const editSchedule = async (params: EditScheduleParams) => {
+  const agenda = getAgenda();
+
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const numCancelled = await agenda.cancel({ 'data.scheduleId': params.scheduleId });
+
+  logger.log(`Removed ${numCancelled} cancelled jobs for wallet ${params.walletAddress}`);
+
+  // Update existing schedule for this wallet address
+  const updatedSchedule = await Schedule.findByIdAndUpdate(
+    params.scheduleId,
+    {
+      name: params.name,
+      purchaseAmount: params.purchaseAmount,
+      purchaseIntervalHuman: params.purchaseIntervalHuman,
+      walletAddress: params.walletAddress,
+    },
+    {
+      new: true, // return the updated document instead of the found one
+    }
+  );
+
+  if (!updatedSchedule) {
+    throw new Error(`Could not find schedule with id ${params.scheduleId}`);
+  }
+
+  const { name, purchaseIntervalHuman: interval } = params;
+
+  // Ensure there's an associated agenda job
+  const job = await scheduleJob<{
+    name: string;
+    scheduleId: Types.ObjectId;
+    walletAddress: string;
+  }>(
+    executeSwap.jobName,
+    { name, scheduleId: updatedSchedule._id, walletAddress: params.walletAddress },
+    { interval }
+  );
+
+  return { job, schedule: updatedSchedule };
 };
 
 export const deleteSchedule = async (params: DeleteScheduleParams) => {

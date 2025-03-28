@@ -21,6 +21,7 @@ export const env = createEnv({
   emptyStringAsUndefined: true,
   runtimeEnv: process.env,
   server: {
+    ALLOWED_AUDIENCE: z.string().url(),
     BASE_RPC_URL: z.string().url(),
     COINRANKING_API_KEY: z.string(),
     CORS_ALLOWED_DOMAIN: z.string(),
