@@ -1,8 +1,10 @@
 import React, { createContext, useCallback, useState, useEffect, ReactNode } from 'react';
 import { VincentSDK } from '@lit-protocol/vincent-sdk';
-import { ethers } from 'ethers';
+
+import { APP_ID } from '@/config';
 
 const JWT_URL_KEY = 'jwt';
+const APP_JWT_KEY = `${APP_ID}-${JWT_URL_KEY}`;
 
 function clearQueryParams() {
   window.history.replaceState(null, '', window.location.pathname);
@@ -39,27 +41,24 @@ export const JwtProvider: React.FC<JwtProviderProps> = ({ children }) => {
   const logOut = useCallback(async () => {
     clearQueryParams();
     setAuthInfo(null);
-    await vincentSdk.clearJWT();
-  }, [vincentSdk]);
+    localStorage.removeItem(APP_JWT_KEY);
+  }, []);
 
   const logWithJwt = useCallback(async () => {
     const jwt =
-      (await vincentSdk.getJWT()) || new URLSearchParams(window.location.search).get(JWT_URL_KEY);
-
-    await vincentSdk.storeJWT(jwt ?? '');
-    const jwtVerifies = await vincentSdk.verifyJWT(window.location.origin);
-    if (!jwt || !jwtVerifies) {
+      new URLSearchParams(window.location.search).get(JWT_URL_KEY) ||
+      localStorage.getItem(APP_JWT_KEY);
+    if (!jwt || !vincentSdk.verifyJWT(jwt, window.location.origin)) {
       return logOut(); // Clear any leftover and logout
     }
 
-    const decodedJWT = await vincentSdk.decodeJWT();
-    const pkpPublicKey = decodedJWT.payload.pkpPublicKey as string;
-    const pkpAddress = ethers.utils.computeAddress(pkpPublicKey);
+    localStorage.setItem(APP_JWT_KEY, jwt);
+    const decodedJWT = vincentSdk.decodeJWT(jwt);
     setAuthInfo({
       jwt,
       pkp: {
-        address: pkpAddress,
-        publicKey: pkpPublicKey,
+        address: decodedJWT.payload.pkpAddress,
+        publicKey: decodedJWT.payload.pkpPublicKey,
       },
     });
     clearQueryParams();
