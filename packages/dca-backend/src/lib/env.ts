@@ -29,6 +29,7 @@ export const env = createEnv({
     MONGODB_URI: z.string().url(),
     PORT: z.coerce.number(),
     VINCENT_DELEGATEE_PRIVATE_KEY: z.string(),
+    VINCENT_TOOL_APPROVAL_IPFS_ID: z.string(),
     VINCENT_TOOL_UNISWAP_SWAP_IPFS_ID: z.string(),
   },
 });
