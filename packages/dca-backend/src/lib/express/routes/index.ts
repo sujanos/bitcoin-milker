@@ -49,8 +49,8 @@ export const registerRoutes = (app: Express) => {
     serviceLogger.info(`CORS is disabled for development`);
   } else {
     serviceLogger.info(`Configuring CORS with allowed domain: ${CORS_ALLOWED_DOMAIN}`);
+    app.use(cors(corsConfig));
   }
-  app.use(cors(corsConfig));
 
   app.get('/purchases', authenticateUser, handleListPurchasesRoute);
   app.get('/schedules', authenticateUser, handleListSchedulesRoute);
