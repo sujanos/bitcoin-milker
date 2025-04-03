@@ -1,6 +1,6 @@
 {
   "extends": ["../../tsconfig.base.json"],
-  "include": ["src/**/*.tsx", "src/*.tsx", "vite-env.d.ts"],
+  "include": ["src/**/*.tsx", "src/*.tsx", "eslint.config.js", "vite-env.d.ts"],
   "strictNullChecks": true,
   "allowJs": true,
   "types": ["jest", "node"],
