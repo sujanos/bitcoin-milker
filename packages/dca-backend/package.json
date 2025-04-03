@@ -14,7 +14,8 @@
     "esbuild": "node esbuild.mjs",
     "dev": "pnpm dotenvx run -- pnpm bun --watch ./src/bin/server.ts",
     "start": "node ./dist/bin/server.mjs",
-    "clean": "pnpm exec rm -Rf node_modules dist"
+    "clean": "pnpm exec rm -Rf node_modules dist",
+    "mintRli": "pnpm dotenvx run -- pnpm bun ./src/bin/mintRLINft.ts"
   },
   "repository": {
     "type": "git",
