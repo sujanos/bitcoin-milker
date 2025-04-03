@@ -1,4 +1,8 @@
+/* eslint-disable no-console */
+
 import { ethers } from 'ethers';
+
+import { getAddressesByChainId } from './get-addresses-by-chain-id';
 
 const ERC20_ABI = [
   'function balanceOf(address owner) external view returns (uint256)',
@@ -6,6 +10,10 @@ const ERC20_ABI = [
   'function allowance(address owner, address spender) external view returns (uint256)',
   'function decimals() view returns (uint8)',
 ];
+
+export function getERC20Contract(address: string, provider: ethers.providers.JsonRpcProvider) {
+  return new ethers.Contract(address, ERC20_ABI, provider);
+}
 
 export const getErc20Info = async (
   userRpcProvider: ethers.providers.StaticJsonRpcProvider,
@@ -16,10 +24,24 @@ export const getErc20Info = async (
     throw new Error(`No contract code found at ${tokenAddress}`);
   }
 
-  const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, userRpcProvider);
+  const ethersContract = getERC20Contract(tokenAddress, userRpcProvider);
+  const decimals = await ethersContract.decimals();
 
   return {
-    decimals: await tokenContract.decimals(),
-    ethersContract: tokenContract,
+    decimals,
+    ethersContract,
   };
 };
+
+export async function getExistingUniswapAllowance(
+  chainId: string,
+  contract: ethers.Contract,
+  userAddress: string
+): Promise<ethers.BigNumber> {
+  const { UNISWAP_V3_ROUTER } = getAddressesByChainId(chainId);
+
+  const currentAllowance = await contract.allowance(userAddress, UNISWAP_V3_ROUTER);
+  console.log(`Current router allowance: ${ethers.utils.formatEther(currentAllowance)} WETH`);
+
+  return currentAllowance;
+}

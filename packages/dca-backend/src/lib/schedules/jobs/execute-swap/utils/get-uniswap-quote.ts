@@ -27,7 +27,7 @@ export const getUniswapQuote = async (
 
   // Convert amountIn to wei using provided decimals
   const amountInWei = ethers.utils.parseUnits(amountIn, tokenInDecimals);
-  console.log('Amount conversion:', {
+  console.log('amountIn conversion:', {
     decimals: tokenInDecimals,
     formatted: ethers.utils.formatUnits(amountInWei, tokenInDecimals),
     original: amountIn,
@@ -85,8 +85,9 @@ export const getUniswapQuote = async (
       if (err.reason === 'Unexpected error') {
         console.log(`No pool found for fee tier ${fee / 10000}%`);
       } else {
-        console.error('Debug: Quoter call failed for fee tier:', fee, error);
-        console.error('Error details:', {
+        console.log(`Failed to get quote for fee tier ${fee / 10000}%`, err.message);
+        console.trace('Debug: Quoter call failed for fee tier:', fee, error);
+        console.trace('Error details:', {
           code: err.code,
           message: err.message,
           reason: err.reason,
@@ -102,6 +103,14 @@ export const getUniswapQuote = async (
       'Failed to get quote from Uniswap V3. No valid pool found for this token pair or quote returned 0.'
     );
   }
+
+  console.log('amountOut conversion:', {
+    decimals: tokenOutDecimals,
+    formatted: ethers.utils.formatUnits(bestQuote, tokenOutDecimals),
+    amountInSmallestUnit: ethers.utils
+      .parseUnits(bestQuote.toString(), tokenOutDecimals)
+      .toString(),
+  });
 
   // Calculate minimum output with 0.5% slippage tolerance
   const slippageTolerance = 0.005;

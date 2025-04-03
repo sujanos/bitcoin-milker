@@ -65,7 +65,11 @@ export const getEstimatedGasForApproval = async (
     pkpEthAddress
   );
 
-  consola.log('Approval Gas cost details:', { estimatedGas, maxFeePerGas, maxPriorityFeePerGas });
+  consola.log('Approval Gas cost details:', {
+    estimatedGas: estimatedGas.toString(),
+    maxFeePerGas: maxFeePerGas.toString(),
+    maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+  });
 
   return { estimatedGas, maxFeePerGas, maxPriorityFeePerGas };
 };

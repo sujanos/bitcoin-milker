@@ -85,6 +85,8 @@ export const getTopBaseMemeCoin = async () => {
   logger.debug(`getTopBaseMemeCoin()`);
 
   const topCoins = (await loader.load('topCoins')).coins;
-  logger.debug(`topCoins: ${JSON.stringify(topCoins)}`);
+  logger.debug(
+    `Loaded ${topCoins.length} coins from CoinRanking API - top coin is ${topCoins[0].name}`
+  );
   return topCoins[0];
 };
