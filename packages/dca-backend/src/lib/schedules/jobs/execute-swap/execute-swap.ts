@@ -83,23 +83,113 @@ async function addApproval({
 
   consola.debug('Approval LIT Action Response:', litActionResponse);
 
-  const response = JSON.parse(litActionResponse.response as string);
-  if (response.status === 'success' && response.approvalTxHash) {
+  const approvalResult = JSON.parse(litActionResponse.response as string);
+  if (approvalResult.status === 'success' && approvalResult.approvalTxHash) {
     consola.log('Approval successful. Waiting for transaction confirmation...');
 
-    const receipt = await baseProvider.waitForTransaction(response.approvalTxHash);
+    const receipt = await baseProvider.waitForTransaction(approvalResult.approvalTxHash);
 
     if (receipt.status === 1) {
-      consola.log('Approval transaction confirmed:', response.approvalTxHash);
+      consola.log('Approval transaction confirmed:', approvalResult.approvalTxHash);
     } else {
-      consola.error('Approval transaction failed:', response.approvalTxHash);
-      throw new Error(`Approval transaction failed for hash: ${response.approvalTxHash}`);
+      consola.error('Approval transaction failed:', approvalResult.approvalTxHash);
+      throw new Error(`Approval transaction failed for hash: ${approvalResult.approvalTxHash}`);
     }
   } else {
-    consola.log('Approval failed');
+    consola.log('Approval action failed');
+    throw new Error(JSON.stringify(approvalResult, null, 2));
   }
 
   return approvalGasCost.estimatedGas.mul(approvalGasCost.maxFeePerGas);
+}
+
+async function handleSwapExecution({
+  approvalGasCost,
+  baseProvider,
+  litNodeClient,
+  nativeEthBalance,
+  sessionSigs,
+  tokenOutInfo,
+  topCoin,
+  walletAddress,
+  WETH_ADDRESS,
+  wethAmount,
+  wEthBalance,
+  wEthDecimals,
+}: {
+  WETH_ADDRESS: string;
+  approvalGasCost: ethers.BigNumber;
+  baseProvider: ethers.providers.StaticJsonRpcProvider;
+  litNodeClient: LitNodeClient;
+  nativeEthBalance: ethers.BigNumber;
+  sessionSigs: SessionSigsMap;
+  tokenOutInfo: { decimals: ethers.BigNumber };
+  topCoin: Coin;
+  wEthBalance: ethers.BigNumber;
+  wEthDecimals: ethers.BigNumber;
+  walletAddress: string;
+  wethAmount: number;
+}): Promise<void> {
+  const { gasCost, swapCost } = await getEstimatedUniswapCosts({
+    amountIn: wethAmount.toFixed(18).toString(),
+    pkpEthAddress: walletAddress,
+    tokenInAddress: WETH_ADDRESS,
+    tokenInDecimals: wEthDecimals,
+    tokenOutAddress: topCoin.coinAddress,
+    tokenOutDecimals: tokenOutInfo.decimals,
+    userChainId: BASE_CHAIN_ID,
+    userRpcProvider: baseProvider,
+  });
+
+  if (swapCost.amountOutMin.gt(wEthBalance)) {
+    throw new Error(
+      `Not enough WETH to swap - balance is ${wEthBalance.toString()}, needed ${swapCost.amountOutMin.toString()}`
+    );
+  }
+
+  const requiredSwapGasCost = gasCost.estimatedGas.mul(gasCost.maxFeePerGas);
+  if (!nativeEthBalance.sub(approvalGasCost).gte(requiredSwapGasCost)) {
+    throw new Error(
+      `Not enough ETH to pay for gas for swap - balance is ${nativeEthBalance.toString()}, needed ${requiredSwapGasCost.toString()}`
+    );
+  }
+
+  const litActionResponse = await litNodeClient.executeJs({
+    sessionSigs,
+    ipfsId: VINCENT_TOOL_UNISWAP_SWAP_IPFS_ID,
+    jsParams: {
+      toolParams: {
+        amountIn: wethAmount.toFixed(18).toString(),
+        chainId: BASE_CHAIN_ID,
+        pkpEthAddress: walletAddress,
+        rpcUrl: BASE_RPC_URL,
+        tokenIn: WETH_ADDRESS,
+        tokenOut: topCoin.coinAddress,
+      },
+    },
+  });
+
+  consola.debug('Swap LIT Action Response:', litActionResponse);
+
+  const swapResult = JSON.parse(litActionResponse.response as string);
+
+  if (swapResult.status === 'success' && swapResult.approvalTxHash) {
+    consola.log('Swap successful. Waiting for transaction confirmation...');
+
+    const receipt = await baseProvider.waitForTransaction(swapResult.swapHash);
+
+    if (receipt.status === 1) {
+      consola.log('Swap transaction confirmed:', swapResult.approvalTxHash);
+    } else {
+      consola.error('Swap transaction failed:', swapResult.approvalTxHash);
+      throw new Error(`Swap transaction failed for hash: ${swapResult.approvalTxHash}`);
+    }
+  } else {
+    consola.log('Swap action failed', swapResult);
+    throw new Error(JSON.stringify(swapResult, null, 2));
+  }
+
+  return swapResult.swapHash;
 }
 
 async function executeSwap({ scheduleId }: ExecuteSwapParams): Promise<void> {
@@ -192,68 +282,37 @@ async function executeSwap({ scheduleId }: ExecuteSwapParams): Promise<void> {
       });
     }
 
-    const { gasCost, swapCost } = await getEstimatedUniswapCosts({
-      amountIn: wethAmount.toFixed(18).toString(),
-      pkpEthAddress: walletAddress,
-      tokenInAddress: WETH_ADDRESS!,
-      tokenInDecimals: wEthDecimals,
-      tokenOutAddress: topCoin.coinAddress,
-      tokenOutDecimals: tokenOutInfo.decimals,
-      userChainId: BASE_CHAIN_ID,
-      userRpcProvider: baseProvider,
-    });
-
-    if (swapCost.amountOutMin.gt(wEthBalance)) {
-      throw new Error(
-        `Not enough WETH to swap - balance is ${wEthBalance.toString()}, needed ${swapCost.amountOutMin.toString()}`
-      );
-    }
-
-    const requiredSwapGasCost = gasCost.estimatedGas.mul(gasCost.maxFeePerGas);
-    if (!nativeEthBalance.sub(approvalGasCost).gte(requiredSwapGasCost)) {
-      throw new Error(
-        `Not enough ETH to pay for gas for swap - balance is ${nativeEthBalance.toString()}, needed ${requiredSwapGasCost.toString()}`
-      );
-    }
-
-    const litActionResponse = await litNodeClient.executeJs({
+    const swapHash = await handleSwapExecution({
+      WETH_ADDRESS: WETH_ADDRESS!,
+      // eslint-disable-next-line sort-keys-plus/sort-keys
+      approvalGasCost,
+      baseProvider,
+      litNodeClient,
+      nativeEthBalance,
       sessionSigs,
-      ipfsId: VINCENT_TOOL_UNISWAP_SWAP_IPFS_ID,
-      jsParams: {
-        toolParams: {
-          amountIn: wethAmount.toFixed(18).toString(),
-          chainId: BASE_CHAIN_ID,
-          pkpEthAddress: walletAddress,
-          rpcUrl: BASE_RPC_URL,
-          tokenIn: WETH_ADDRESS!,
-          // tokenInDecimals: tokenInInfo.decimals.toString(),
-          tokenOut: topCoin.coinAddress,
-          // tokenOutDecimals: tokenOutInfo.decimals.toString(),
-        },
-      },
+      tokenOutInfo,
+      topCoin,
+      walletAddress,
+      wethAmount,
+      wEthBalance,
+      wEthDecimals,
     });
-
-    consola.debug('Swap LIT Action Response:', litActionResponse);
-
-    const swapResult = JSON.parse(litActionResponse.response as string);
-    const success = swapResult.status === 'success';
-
     // Create a purchase record with all required fields
     const purchase = new PurchasedCoin({
       purchaseAmount,
       schedule,
-      success,
       walletAddress,
       coinAddress: topCoin.coinAddress,
       name: topCoin.name,
       price: topCoin.price,
+      success: true,
       symbol: topCoin.symbol,
-      txHash: swapResult.swapHash,
+      txHash: swapHash,
     });
     await purchase.save();
 
     consola.debug(
-      `Successfully created purchase record for ${topCoin.symbol} with tx hash ${swapResult.swapHash}`
+      `Successfully created purchase record for ${topCoin.symbol} with tx hash ${swapHash}`
     );
   } catch (e) {
     const err = e as Error;
