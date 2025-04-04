@@ -25,13 +25,6 @@ export const handleListSchedulesRoute = async (req: Request, res: Response) => {
 
     const schedules = await listSchedules({ walletAddress });
 
-    if (!schedules || schedules.length === 0) {
-      res.status(404).json({
-        error: `No DCA schedules found for wallet address ${walletAddress}`,
-      });
-      return;
-    }
-
     res.json({ data: schedules, success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
