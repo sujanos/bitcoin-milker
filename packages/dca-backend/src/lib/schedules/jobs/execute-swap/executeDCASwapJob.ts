@@ -2,13 +2,8 @@ import consola from 'consola';
 import { ethers } from 'ethers';
 import { Types } from 'mongoose';
 
-import { LIT_NETWORK } from '@lit-protocol/constants';
-import { LitNodeClient } from '@lit-protocol/lit-node-client';
-import { SessionSigsMap } from '@lit-protocol/types';
-
 import { Coin, getTopBaseMemeCoin } from './baseMemeCoinLoader';
 import { getEthereumPriceUsd } from './ethPriceLoader';
-import { getSessionSigs } from './getSessionSigs';
 import {
   getAddressesByChainId,
   getErc20Info,
@@ -16,24 +11,22 @@ import {
   getEstimatedUniswapCosts,
 } from './utils';
 import { getERC20Contract, getExistingUniswapAllowance } from './utils/get-erc20-info';
+import { erc20ApprovalToolClient, uniswapToolClient } from './vincentTools';
 import { env } from '../../../env';
-import { getLitNodeClientInstance } from '../../../LitNodeClient/getLitNodeClient';
 import { PurchasedCoin } from '../../../mongo/models/PurchasedCoin';
 import { Schedule } from '../../../mongo/models/Schedule';
 
-export interface ExecuteSwapParams {
+export interface ExecuteDCASwapJobParams {
   scheduleId: Types.ObjectId;
 }
 
-const { BASE_RPC_URL, VINCENT_TOOL_APPROVAL_IPFS_ID, VINCENT_TOOL_UNISWAP_SWAP_IPFS_ID } = env;
+const { BASE_RPC_URL } = env;
 
 const BASE_CHAIN_ID = '8453';
 
 async function addApproval({
   baseProvider,
-  litNodeClient,
   nativeEthBalance,
-  sessionSigs,
   walletAddress,
   WETH_ADDRESS,
   wethAmount,
@@ -41,9 +34,7 @@ async function addApproval({
 }: {
   WETH_ADDRESS: string;
   baseProvider: ethers.providers.StaticJsonRpcProvider;
-  litNodeClient: LitNodeClient;
   nativeEthBalance: ethers.BigNumber;
-  sessionSigs: SessionSigsMap;
   wEthDecimals: ethers.BigNumber;
   walletAddress: string;
   wethAmount: number;
@@ -67,23 +58,17 @@ async function addApproval({
     );
   }
 
-  const litActionResponse = await litNodeClient.executeJs({
-    sessionSigs,
-    ipfsId: VINCENT_TOOL_APPROVAL_IPFS_ID,
-    jsParams: {
-      toolParams: {
-        amountIn: (wethAmount * 5).toFixed(18).toString(), // Approve 5x the amount to spend so we don't wait for approval tx's every time we run
-        chainId: BASE_CHAIN_ID,
-        pkpEthAddress: walletAddress,
-        rpcUrl: BASE_RPC_URL,
-        tokenIn: WETH_ADDRESS!,
-      },
-    },
+  const toolExecutionResult = await erc20ApprovalToolClient.execute({
+    amountIn: (wethAmount * 5).toFixed(18).toString(), // Approve 5x the amount to spend so we don't wait for approval tx's every time we run
+    chainId: BASE_CHAIN_ID,
+    pkpEthAddress: walletAddress,
+    rpcUrl: BASE_RPC_URL,
+    tokenIn: WETH_ADDRESS!,
   });
 
-  consola.debug('Approval LIT Action Response:', litActionResponse);
+  consola.debug('ERC20 Approval Vincent Tool Response:', toolExecutionResult);
 
-  const approvalResult = JSON.parse(litActionResponse.response as string);
+  const approvalResult = JSON.parse(toolExecutionResult.response as string);
   if (approvalResult.status === 'success' && approvalResult.approvalTxHash) {
     consola.log('Approval successful. Waiting for transaction confirmation...');
 
@@ -106,9 +91,7 @@ async function addApproval({
 async function handleSwapExecution({
   approvalGasCost,
   baseProvider,
-  litNodeClient,
   nativeEthBalance,
-  sessionSigs,
   tokenOutInfo,
   topCoin,
   walletAddress,
@@ -120,9 +103,7 @@ async function handleSwapExecution({
   WETH_ADDRESS: string;
   approvalGasCost: ethers.BigNumber;
   baseProvider: ethers.providers.StaticJsonRpcProvider;
-  litNodeClient: LitNodeClient;
   nativeEthBalance: ethers.BigNumber;
-  sessionSigs: SessionSigsMap;
   tokenOutInfo: { decimals: ethers.BigNumber };
   topCoin: Coin;
   wEthBalance: ethers.BigNumber;
@@ -154,24 +135,18 @@ async function handleSwapExecution({
     );
   }
 
-  const litActionResponse = await litNodeClient.executeJs({
-    sessionSigs,
-    ipfsId: VINCENT_TOOL_UNISWAP_SWAP_IPFS_ID,
-    jsParams: {
-      toolParams: {
-        amountIn: wethAmount.toFixed(18).toString(),
-        chainId: BASE_CHAIN_ID,
-        pkpEthAddress: walletAddress,
-        rpcUrl: BASE_RPC_URL,
-        tokenIn: WETH_ADDRESS,
-        tokenOut: topCoin.coinAddress,
-      },
-    },
+  const uniswapSwapToolResponse = await uniswapToolClient.execute({
+    amountIn: wethAmount.toFixed(18).toString(),
+    chainId: BASE_CHAIN_ID,
+    pkpEthAddress: walletAddress,
+    rpcUrl: BASE_RPC_URL,
+    tokenIn: WETH_ADDRESS,
+    tokenOut: topCoin.coinAddress,
   });
 
-  consola.debug('Swap LIT Action Response:', litActionResponse);
+  consola.debug('Swap Vicent Tool Response:', uniswapSwapToolResponse);
 
-  const swapResult = JSON.parse(litActionResponse.response as string);
+  const swapResult = JSON.parse(uniswapSwapToolResponse.response as string);
 
   if (swapResult.status === 'success' && swapResult.approvalTxHash) {
     consola.log('Swap successful. Waiting for transaction confirmation...');
@@ -192,7 +167,7 @@ async function handleSwapExecution({
   return swapResult.swapHash;
 }
 
-async function executeSwap({ scheduleId }: ExecuteSwapParams): Promise<void> {
+async function executeDCASwapJob({ scheduleId }: ExecuteDCASwapJobParams): Promise<void> {
   try {
     // Fetch top coin first to get the target token
     consola.debug('Fetching top coin...');
@@ -262,10 +237,6 @@ async function executeSwap({ scheduleId }: ExecuteSwapParams): Promise<void> {
 
     const needsApproval = existingAllowance.lte(wethToSpend);
 
-    const litNodeClient = await getLitNodeClientInstance({ network: LIT_NETWORK.Datil });
-
-    const sessionSigs = await getSessionSigs({ litNodeClient });
-
     let approvalGasCost = ethers.BigNumber.from(0);
 
     if (needsApproval) {
@@ -273,9 +244,7 @@ async function executeSwap({ scheduleId }: ExecuteSwapParams): Promise<void> {
         WETH_ADDRESS: WETH_ADDRESS!,
         // eslint-disable-next-line sort-keys-plus/sort-keys
         baseProvider,
-        litNodeClient,
         nativeEthBalance,
-        sessionSigs,
         walletAddress,
         wethAmount,
         wEthDecimals,
@@ -287,9 +256,7 @@ async function executeSwap({ scheduleId }: ExecuteSwapParams): Promise<void> {
       // eslint-disable-next-line sort-keys-plus/sort-keys
       approvalGasCost,
       baseProvider,
-      litNodeClient,
       nativeEthBalance,
-      sessionSigs,
       tokenOutInfo,
       topCoin,
       walletAddress,
@@ -315,6 +282,9 @@ async function executeSwap({ scheduleId }: ExecuteSwapParams): Promise<void> {
       `Successfully created purchase record for ${topCoin.symbol} with tx hash ${swapHash}`
     );
   } catch (e) {
+    // Catch-and-rethrow is usually an anti-pattern, but Agenda doesn't log failed job reasons to console
+    // so this is our chance to log the job failure details using Consola before we throw the error
+    // to Agenda, which will write the failure reason to the Agenda job document in Mongo
     const err = e as Error;
     consola.error(err.message, err.stack);
     throw e;
@@ -322,4 +292,4 @@ async function executeSwap({ scheduleId }: ExecuteSwapParams): Promise<void> {
 }
 
 export const jobName = 'execute-swap';
-export const processJob = executeSwap;
+export const processJob = executeDCASwapJob;
