@@ -1,9 +1,10 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
+import { AuthenticatedRequest } from './auth/types';
 import { PurchasedCoin } from '../../mongo/models/PurchasedCoin';
 
-export const handleListPurchasesRoute = async (req: Request, res: Response) => {
-  const { walletAddress } = req.params as { walletAddress?: string };
+export const handleListPurchasesRoute = async (req: AuthenticatedRequest, res: Response) => {
+  const walletAddress = req.user.pkpAddress;
 
   const purchases = await PurchasedCoin.find({ walletAddress })
     .sort({

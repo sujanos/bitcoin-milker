@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { Types } from 'mongoose';
 
 import { disableJob, enableJob } from '../../scheduleManager/jobs';
@@ -9,14 +9,11 @@ import {
   listSchedules,
 } from '../../scheduleManager/schedules';
 import { CreateScheduleParams, EditScheduleParams } from '../../types';
+import { AuthenticatedRequest } from './auth/types';
 
-function getWalletAddressFromRequest(req: Request): string | undefined {
-  return req.user?.pkp.address;
-}
-
-export const handleListSchedulesRoute = async (req: Request, res: Response) => {
+export const handleListSchedulesRoute = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const walletAddress = getWalletAddressFromRequest(req);
+    const walletAddress = req.user.pkpAddress;
 
     if (!walletAddress) {
       res.status(400).json({ error: 'No wallet address provided' });
@@ -31,9 +28,9 @@ export const handleListSchedulesRoute = async (req: Request, res: Response) => {
   }
 };
 
-export const handleCreateScheduleRoute = async (req: Request, res: Response) => {
+export const handleCreateScheduleRoute = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const walletAddress = getWalletAddressFromRequest(req);
+    const walletAddress = req.user.pkpAddress;
 
     if (!walletAddress) {
       res.status(400).json({ error: 'No wallet address provided' });
@@ -49,9 +46,9 @@ export const handleCreateScheduleRoute = async (req: Request, res: Response) => 
   }
 };
 
-export const handleEditScheduleRoute = async (req: Request, res: Response) => {
+export const handleEditScheduleRoute = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const walletAddress = getWalletAddressFromRequest(req);
+    const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
     if (!walletAddress) {
@@ -68,9 +65,9 @@ export const handleEditScheduleRoute = async (req: Request, res: Response) => {
   }
 };
 
-export const handleDisableScheduleRoute = async (req: Request, res: Response) => {
+export const handleDisableScheduleRoute = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const walletAddress = getWalletAddressFromRequest(req);
+    const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
     if (!walletAddress) {
@@ -90,9 +87,9 @@ export const handleDisableScheduleRoute = async (req: Request, res: Response) =>
   }
 };
 
-export const handleEnableScheduleRoute = async (req: Request, res: Response) => {
+export const handleEnableScheduleRoute = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const walletAddress = getWalletAddressFromRequest(req);
+    const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
     if (!walletAddress) {
@@ -108,9 +105,9 @@ export const handleEnableScheduleRoute = async (req: Request, res: Response) => 
   }
 };
 
-export const handleDeleteScheduleRoute = async (req: Request, res: Response) => {
+export const handleDeleteScheduleRoute = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const walletAddress = getWalletAddressFromRequest(req);
+    const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
     if (!walletAddress) {

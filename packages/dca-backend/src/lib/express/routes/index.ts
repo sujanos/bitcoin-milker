@@ -1,7 +1,7 @@
 import cors from 'cors';
 import express, { Express } from 'express';
 
-import { authenticateUser } from './auth';
+import { asAuthenticatedReq, getAuthenticateUserExpressHandler } from './auth/auth';
 import { handleListPurchasesRoute } from './purchases';
 import {
   handleListSchedulesRoute,
@@ -14,7 +14,9 @@ import {
 import { env } from '../../env';
 import { serviceLogger } from '../../logger';
 
-const { CORS_ALLOWED_DOMAIN, IS_DEVELOPMENT } = env;
+const { ALLOWED_AUDIENCE, CORS_ALLOWED_DOMAIN, IS_DEVELOPMENT } = env;
+
+const authenticateUser = getAuthenticateUserExpressHandler(ALLOWED_AUDIENCE);
 
 const corsConfig = {
   optionsSuccessStatus: 204,
@@ -31,13 +33,25 @@ export const registerRoutes = (app: Express) => {
   }
   app.use(cors(corsConfig));
 
-  app.get('/purchases', authenticateUser, handleListPurchasesRoute);
-  app.get('/schedules', authenticateUser, handleListSchedulesRoute);
-  app.post('/schedule', authenticateUser, handleCreateScheduleRoute);
-  app.put('/schedules/:scheduleId', authenticateUser, handleEditScheduleRoute);
-  app.put('/schedules/:scheduleId/enable', authenticateUser, handleEnableScheduleRoute);
-  app.put('/schedules/:scheduleId/disable', authenticateUser, handleDisableScheduleRoute);
-  app.delete('/schedules/:scheduleId', authenticateUser, handleDeleteScheduleRoute);
+  app.get('/purchases', authenticateUser, asAuthenticatedReq(handleListPurchasesRoute));
+  app.get('/schedules', authenticateUser, asAuthenticatedReq(handleListSchedulesRoute));
+  app.post('/schedule', authenticateUser, asAuthenticatedReq(handleCreateScheduleRoute));
+  app.put('/schedules/:scheduleId', authenticateUser, asAuthenticatedReq(handleEditScheduleRoute));
+  app.put(
+    '/schedules/:scheduleId/enable',
+    authenticateUser,
+    asAuthenticatedReq(handleEnableScheduleRoute)
+  );
+  app.put(
+    '/schedules/:scheduleId/disable',
+    authenticateUser,
+    asAuthenticatedReq(handleDisableScheduleRoute)
+  );
+  app.delete(
+    '/schedules/:scheduleId',
+    authenticateUser,
+    asAuthenticatedReq(handleDeleteScheduleRoute)
+  );
 
   serviceLogger.info(`Routes registered`);
 };
