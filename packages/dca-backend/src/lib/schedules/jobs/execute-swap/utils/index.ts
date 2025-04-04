@@ -1,9 +1,5 @@
-export * from './get-addresses-by-chain-id';
-export * from './get-uniswap-quote';
-export * from './get-token-amount-in-usd';
-export * from './get-eth-usd-price';
-export * from './validate-tokens-are-allowed';
-export * from './validate-spending-limits';
-export * from './get-erc20-info';
-export * from './send-uniswap-tx';
-export * from './send-erc20-approval';
+export { getAddressesByChainId } from './get-addresses-by-chain-id';
+export { getUniswapQuote } from './get-uniswap-quote';
+export { getErc20Info, getERC20Contract, getExistingUniswapAllowance } from './get-erc20-info';
+export { getEstimatedUniswapCosts } from './send-uniswap-tx';
+export { getEstimatedGasForApproval } from './send-erc20-approval';
