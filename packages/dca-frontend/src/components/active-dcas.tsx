@@ -21,13 +21,17 @@ export const ActiveDcas: React.FC = () => {
   const [activeDCAs, setActiveDCAs] = useState<DCA[]>([]);
   const { deleteDCA, disableDCA, enableDCA, getDCAs } = useBackend();
 
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const fetchDCAs = async () => {
       try {
         const dcas = await getDCAs();
         setActiveDCAs(dcas);
+        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching active DCAs:', error);
+        setIsLoading(false);
       }
     };
     fetchDCAs();
@@ -93,7 +97,7 @@ export const ActiveDcas: React.FC = () => {
     [activeDCAs, deleteDCA, setActiveDCAs]
   );
 
-  if (!activeDCAs.length) {
+  if (!activeDCAs.length && isLoading) {
     // TODO add a loading indicator while fetching, then show table even if empty
     return (
       <div className="dcas-list">

@@ -1,4 +1,5 @@
 {
-  "*.{ts,tsx,cjs,js}": ["prettier --write", "eslint --fix"],
+  "packages/dca-frontend/**/*.{ts,tsx,cjs,js}": ["prettier --write", "pnpm --filter dca-frontend -- lint --fix"],
+  "packages/dca-backend/**/*.{ts,tsx,cjs,js}": ["prettier --write", "pnpm --filter dca-backend lint --fix"],
   "*.json,md": ["prettier --write"]
 }

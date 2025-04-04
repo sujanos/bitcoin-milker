@@ -1,8 +1,8 @@
-import { useCallback, useContext, useState } from 'react';
-import { VincentSDK } from '@lit-protocol/vincent-sdk';
+import { useCallback, useContext } from 'react';
 
-import { APP_ID, BACKEND_URL, CONSENT_PAGE_BASE, REDIRECT_URI } from '@/config';
+import { BACKEND_URL, REDIRECT_URI } from '@/config';
 import { JwtContext } from '@/contexts/jwt';
+import { useVincentWebAppClient } from '@/hooks/useVincentWebAppClient';
 
 type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -21,12 +21,15 @@ export interface DCA extends CreateDCARequest {
 
 export const useBackend = () => {
   const { authInfo } = useContext(JwtContext);
-  const [vincentSdk] = useState(() => new VincentSDK({ consentPageUrl: CONSENT_PAGE_BASE }));
+  const vincentWebAppClient = useVincentWebAppClient();
 
   const getJwt = useCallback(() => {
-    // Redirect to Vincent Auth consent page with appId and the uri we want to receive the jwt
-    vincentSdk.redirectConsentPage(APP_ID, REDIRECT_URI);
-  }, [vincentSdk]);
+    // Redirect to Vincent Auth consent page with appId and version
+    vincentWebAppClient.redirectToConsentPage({
+      // consentPageUrl: `localhost:8080`
+      redirectUri: REDIRECT_URI,
+    });
+  }, [vincentWebAppClient]);
 
   const sendRequest = useCallback(
     async <T>(endpoint: string, method: HTTPMethod, body?: unknown): Promise<T> => {

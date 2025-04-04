@@ -1,14 +1,12 @@
 import React, { createContext, useCallback, useState, useEffect, ReactNode } from 'react';
-import { VincentSDK } from '@lit-protocol/vincent-sdk';
+import { jwt } from '@lit-protocol/vincent-sdk';
+
+const { decode, isExpired } = jwt;
 
 import { APP_ID } from '@/config';
+import { useVincentWebAppClient } from '@/hooks/useVincentWebAppClient';
 
-const JWT_URL_KEY = 'jwt';
-const APP_JWT_KEY = `${APP_ID}-${JWT_URL_KEY}`;
-
-function clearQueryParams() {
-  window.history.replaceState(null, '', window.location.pathname);
-}
+const APP_JWT_KEY = `${APP_ID}-jwt`;
 
 export interface AuthInfo {
   jwt: string;
@@ -35,37 +33,70 @@ interface JwtProviderProps {
 }
 
 export const JwtProvider: React.FC<JwtProviderProps> = ({ children }) => {
-  const [vincentSdk] = useState(() => new VincentSDK());
+  const vincentWebAppClient = useVincentWebAppClient();
   const [authInfo, setAuthInfo] = useState<AuthInfo | null | undefined>(undefined);
 
-  const logOut = useCallback(async () => {
-    clearQueryParams();
+  const logOut = useCallback(() => {
     setAuthInfo(null);
     localStorage.removeItem(APP_JWT_KEY);
   }, []);
 
-  const logWithJwt = useCallback(async () => {
-    const jwt =
-      new URLSearchParams(window.location.search).get(JWT_URL_KEY) ||
-      localStorage.getItem(APP_JWT_KEY);
-    if (!jwt || !vincentSdk.verifyJWT(jwt, window.location.origin)) {
-      return logOut(); // Clear any leftover and logout
+  const logWithJwt = useCallback(() => {
+    const existingJwtStr = localStorage.getItem(APP_JWT_KEY);
+    const didJustLogin = vincentWebAppClient.isLogin();
+
+    if (didJustLogin) {
+      try {
+        const jwtResult = vincentWebAppClient.decodeVincentLoginJWT(window.location.origin);
+
+        if (jwtResult) {
+          const { decodedJWT, jwtStr } = jwtResult;
+
+          localStorage.setItem(APP_JWT_KEY, jwtStr);
+          vincentWebAppClient.removeLoginJWTFromURI();
+          setAuthInfo({
+            jwt: jwtStr,
+            pkp: {
+              address: decodedJWT.payload.pkpAddress,
+              publicKey: decodedJWT.payload.pkpPublicKey,
+            },
+          });
+          return;
+        } else {
+          logOut();
+          return;
+        }
+      } catch {
+        logOut();
+        return;
+      }
     }
 
-    localStorage.setItem(APP_JWT_KEY, jwt);
-    const decodedJWT = vincentSdk.decodeJWT(jwt);
-    setAuthInfo({
-      jwt,
-      pkp: {
-        address: decodedJWT.payload.pkpAddress,
-        publicKey: decodedJWT.payload.pkpPublicKey,
-      },
-    });
-    clearQueryParams();
-  }, [logOut, vincentSdk]);
+    if (existingJwtStr) {
+      const decodedJWT = decode(existingJwtStr);
+      const expiredToken = isExpired(decodedJWT);
+      if (expiredToken) {
+        logOut();
+      }
+
+      setAuthInfo({
+        jwt: existingJwtStr,
+        pkp: {
+          address: decodedJWT.payload.pkpAddress,
+          publicKey: decodedJWT.payload.pkpPublicKey,
+        },
+      });
+
+      return;
+    }
+  }, [logOut, vincentWebAppClient]);
 
   useEffect(() => {
-    logWithJwt().catch(logOut);
+    try {
+      logWithJwt();
+    } catch {
+      logOut();
+    }
   }, [logWithJwt, logOut]);
 
   return (
