@@ -77,8 +77,8 @@ export function isCapacityCreditExpired(
 
 /** Mint a new capacity credit NFT */
 export async function mintCapacityCredit({
-  daysUntilUTCMidnightExpiration = 1,
-  requestsPerKilosecond = 10,
+  daysUntilUTCMidnightExpiration = 30,
+  requestsPerKilosecond = 100,
 }: CapacityCreditMintOptions = {}): Promise<CapacityCreditInfo> {
   if (!litContractClient.connected) {
     await litContractClient.connect();

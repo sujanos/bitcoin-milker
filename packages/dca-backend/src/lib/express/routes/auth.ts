@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { VincentSDK } from '@lit-protocol/vincent-sdk';
+import { jwt } from '@lit-protocol/vincent-sdk';
 
 import { env } from '../../env';
+
+const { verify } = jwt;
 
 const { ALLOWED_AUDIENCE } = env;
 
@@ -19,26 +21,28 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
     return;
   }
 
-  const [scheme, jwt] = parts;
+  const [scheme, jwtStr] = parts;
   if (!/^Bearer$/i.test(scheme)) {
     res.status(401).json({ error: 'Token malformatted' });
     return;
   }
 
-  const vincentSdk = new VincentSDK();
-  if (!vincentSdk.verifyJWT(jwt, ALLOWED_AUDIENCE)) {
-    res.status(401).json({ error: 'Invalid token' });
-    return;
+  try {
+    const decodedJWT = verify(jwtStr, ALLOWED_AUDIENCE);
+    if (!decodedJWT) {
+      res.status(401).json({ error: 'Invalid token' });
+      return;
+    }
+
+    req.user = {
+      jwt: jwtStr,
+      pkp: {
+        address: decodedJWT.payload.pkpAddress,
+        publicKey: decodedJWT.payload.pkpPublicKey,
+      },
+    };
+    next();
+  } catch (e) {
+    res.status(401).json({ error: `Invalid token: ${(e as Error).message}` });
   }
-
-  const decodedJWT = vincentSdk.decodeJWT(jwt);
-
-  req.user = {
-    jwt,
-    pkp: {
-      address: decodedJWT.payload.pkpAddress,
-      publicKey: decodedJWT.payload.pkpPublicKey,
-    },
-  };
-  next();
 };

@@ -102,7 +102,7 @@ export const getEstimatedUniswapCosts = async ({
     pkpEthAddress,
     tokenInAddress,
     tokenOutAddress,
-    uniswapV3RouterContract,
+    uniswapV3RouterContract: uniswapV3RouterContract.address,
   });
 
   const { estimatedGas, maxFeePerGas, maxPriorityFeePerGas } = await estimateGasForSwap(
@@ -116,8 +116,15 @@ export const getEstimatedUniswapCosts = async ({
   );
 
   consola.log('Gas cost details:', {
-    gasCost: { estimatedGas, maxFeePerGas, maxPriorityFeePerGas },
-    swapCost: { amountOutMin, bestFee },
+    gasCost: {
+      estimatedGas: estimatedGas.toString(),
+      maxFeePerGas: maxFeePerGas.toString(),
+      maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+    },
+    swapCost: {
+      amountOutMin: amountOutMin.toString(),
+      bestFee: bestFee.toString(),
+    },
   });
 
   return {
