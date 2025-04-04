@@ -36,8 +36,8 @@ async function addApproval({
   sessionSigs,
   walletAddress,
   WETH_ADDRESS,
+  wethAmount,
   wEthDecimals,
-  wethToSpend,
 }: {
   WETH_ADDRESS: string;
   baseProvider: ethers.providers.StaticJsonRpcProvider;
@@ -46,13 +46,13 @@ async function addApproval({
   sessionSigs: SessionSigsMap;
   wEthDecimals: ethers.BigNumber;
   walletAddress: string;
-  wethToSpend: ethers.BigNumber;
+  wethAmount: number;
 }): Promise<ethers.BigNumber> {
   const approvalGasCost = await getEstimatedGasForApproval(
     baseProvider,
     BASE_CHAIN_ID,
     WETH_ADDRESS!,
-    wethToSpend.mul(5).toString(),
+    (wethAmount * 5).toString(),
     wEthDecimals.toString(),
     walletAddress
   );
@@ -72,7 +72,7 @@ async function addApproval({
     ipfsId: VINCENT_TOOL_APPROVAL_IPFS_ID,
     jsParams: {
       toolParams: {
-        amountIn: wethToSpend.mul(5).toString(), // Approve 5x the amount to spend so we don't wait for approval tx's every time we run
+        amountIn: (wethAmount * 5).toFixed(18).toString(), // Approve 5x the amount to spend so we don't wait for approval tx's every time we run
         chainId: BASE_CHAIN_ID,
         pkpEthAddress: walletAddress,
         rpcUrl: BASE_RPC_URL,
@@ -82,6 +82,22 @@ async function addApproval({
   });
 
   consola.debug('Approval LIT Action Response:', litActionResponse);
+
+  const response = JSON.parse(litActionResponse.response as string);
+  if (response.status === 'success' && response.approvalTxHash) {
+    consola.log('Approval successful. Waiting for transaction confirmation...');
+
+    const receipt = await baseProvider.waitForTransaction(response.approvalTxHash);
+
+    if (receipt.status === 1) {
+      consola.log('Approval transaction confirmed:', response.approvalTxHash);
+    } else {
+      consola.error('Approval transaction failed:', response.approvalTxHash);
+      throw new Error(`Approval transaction failed for hash: ${response.approvalTxHash}`);
+    }
+  } else {
+    consola.log('Approval failed');
+  }
 
   return approvalGasCost.estimatedGas.mul(approvalGasCost.maxFeePerGas);
 }
@@ -144,12 +160,12 @@ async function executeSwap({ scheduleId }: ExecuteSwapParams): Promise<void> {
 
     consola.log('Job details', {
       ethPriceUsd,
-      existingAllowance,
       purchaseAmount,
       usdAmountStr,
       walletAddress,
       wethAmount,
       wethPriceStr,
+      existingAllowance: existingAllowance.toString(),
       nativeEthBalance: nativeEthBalance.toString(),
       wethToSpend: wethToSpend.toString(),
     });
@@ -171,8 +187,8 @@ async function executeSwap({ scheduleId }: ExecuteSwapParams): Promise<void> {
         nativeEthBalance,
         sessionSigs,
         walletAddress,
+        wethAmount,
         wEthDecimals,
-        wethToSpend,
       });
     }
 
@@ -205,7 +221,7 @@ async function executeSwap({ scheduleId }: ExecuteSwapParams): Promise<void> {
       ipfsId: VINCENT_TOOL_UNISWAP_SWAP_IPFS_ID,
       jsParams: {
         toolParams: {
-          amountIn: wethToSpend.toString(),
+          amountIn: wethAmount.toFixed(18).toString(),
           chainId: BASE_CHAIN_ID,
           pkpEthAddress: walletAddress,
           rpcUrl: BASE_RPC_URL,
