@@ -16,7 +16,8 @@
     "test": "pnpm -r run test",
     "dev": "pnpm build && pnpm -r run dev",
     "prepare": "husky",
-    "start": "pnpm -r run start"
+    "start": "pnpm -r run start",
+    "link-local-vincent-sdk-dev": "pnpm dotenvx run -- ./linkVincentSdkLocaldev.sh"
   },
   "packageManager": "pnpm@10.7.0",
   "keywords": [],

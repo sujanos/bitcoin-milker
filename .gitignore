@@ -7,7 +7,7 @@ data
 # dotEnv files should not be committed
 .env*
 !.env.vault
-!.env.example
+!.env.example*
 
 # IDE config
 /.idea
