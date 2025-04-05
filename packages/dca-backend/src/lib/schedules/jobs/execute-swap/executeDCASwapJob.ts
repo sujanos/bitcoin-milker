@@ -271,7 +271,7 @@ async function executeDCASwapJob({ scheduleId }: ExecuteDCASwapJobParams): Promi
       walletAddress,
       coinAddress: topCoin.coinAddress,
       name: topCoin.name,
-      price: topCoin.price,
+      purchasePrice: topCoin.price,
       success: true,
       symbol: topCoin.symbol,
       txHash: swapHash,
