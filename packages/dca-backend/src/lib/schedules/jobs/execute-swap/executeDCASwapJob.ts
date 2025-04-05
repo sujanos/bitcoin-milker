@@ -148,23 +148,23 @@ async function handleSwapExecution({
 
   const swapResult = JSON.parse(uniswapSwapToolResponse.response as string);
 
-  if (swapResult.status === 'success' && swapResult.approvalTxHash) {
+  if (swapResult.status === 'success' && swapResult.swapTxHash) {
     consola.log('Swap successful. Waiting for transaction confirmation...');
 
-    const receipt = await baseProvider.waitForTransaction(swapResult.swapHash);
+    const receipt = await baseProvider.waitForTransaction(swapResult.swapTxHash);
 
     if (receipt.status === 1) {
-      consola.log('Swap transaction confirmed:', swapResult.approvalTxHash);
+      consola.log('Swap transaction confirmed:', swapResult.swapTxHash);
     } else {
-      consola.error('Swap transaction failed:', swapResult.approvalTxHash);
-      throw new Error(`Swap transaction failed for hash: ${swapResult.approvalTxHash}`);
+      consola.error('Swap transaction failed:', swapResult.swapTxHash);
+      throw new Error(`Swap transaction failed for hash: ${swapResult.swapTxHash}`);
     }
   } else {
     consola.log('Swap action failed', swapResult);
     throw new Error(JSON.stringify(swapResult, null, 2));
   }
 
-  return swapResult.swapHash;
+  return swapResult.swapTxHash;
 }
 
 async function executeDCASwapJob({ scheduleId }: ExecuteDCASwapJobParams): Promise<void> {
