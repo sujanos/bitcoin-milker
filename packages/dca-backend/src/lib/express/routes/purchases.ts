@@ -1,9 +1,13 @@
 import { Response } from 'express';
 
-import { AuthenticatedRequest } from './auth/types';
 import { PurchasedCoin } from '../../mongo/models/PurchasedCoin';
 
-export const handleListPurchasesRoute = async (req: AuthenticatedRequest, res: Response) => {
+import type { ExpressAuthHelpers } from '@lit-protocol/vincent-sdk';
+
+export const handleListPurchasesRoute = async (
+  req: ExpressAuthHelpers['AuthenticatedRequest'],
+  res: Response
+) => {
   const walletAddress = req.user.pkpAddress;
 
   const purchases = await PurchasedCoin.find({ walletAddress })

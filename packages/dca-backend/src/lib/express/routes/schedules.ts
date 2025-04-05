@@ -9,9 +9,13 @@ import {
   listSchedules,
 } from '../../scheduleManager/schedules';
 import { CreateScheduleParams, EditScheduleParams } from '../../types';
-import { AuthenticatedRequest } from './auth/types';
 
-export const handleListSchedulesRoute = async (req: AuthenticatedRequest, res: Response) => {
+import type { ExpressAuthHelpers } from '@lit-protocol/vincent-sdk';
+
+export const handleListSchedulesRoute = async (
+  req: ExpressAuthHelpers['AuthenticatedRequest'],
+  res: Response
+) => {
   try {
     const walletAddress = req.user.pkpAddress;
 
@@ -28,7 +32,10 @@ export const handleListSchedulesRoute = async (req: AuthenticatedRequest, res: R
   }
 };
 
-export const handleCreateScheduleRoute = async (req: AuthenticatedRequest, res: Response) => {
+export const handleCreateScheduleRoute = async (
+  req: ExpressAuthHelpers['AuthenticatedRequest'],
+  res: Response
+) => {
   try {
     const walletAddress = req.user.pkpAddress;
 
@@ -46,7 +53,10 @@ export const handleCreateScheduleRoute = async (req: AuthenticatedRequest, res: 
   }
 };
 
-export const handleEditScheduleRoute = async (req: AuthenticatedRequest, res: Response) => {
+export const handleEditScheduleRoute = async (
+  req: ExpressAuthHelpers['AuthenticatedRequest'],
+  res: Response
+) => {
   try {
     const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
@@ -65,7 +75,10 @@ export const handleEditScheduleRoute = async (req: AuthenticatedRequest, res: Re
   }
 };
 
-export const handleDisableScheduleRoute = async (req: AuthenticatedRequest, res: Response) => {
+export const handleDisableScheduleRoute = async (
+  req: ExpressAuthHelpers['AuthenticatedRequest'],
+  res: Response
+) => {
   try {
     const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
@@ -87,7 +100,10 @@ export const handleDisableScheduleRoute = async (req: AuthenticatedRequest, res:
   }
 };
 
-export const handleEnableScheduleRoute = async (req: AuthenticatedRequest, res: Response) => {
+export const handleEnableScheduleRoute = async (
+  req: ExpressAuthHelpers['AuthenticatedRequest'],
+  res: Response
+) => {
   try {
     const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
@@ -105,7 +121,10 @@ export const handleEnableScheduleRoute = async (req: AuthenticatedRequest, res: 
   }
 };
 
-export const handleDeleteScheduleRoute = async (req: AuthenticatedRequest, res: Response) => {
+export const handleDeleteScheduleRoute = async (
+  req: ExpressAuthHelpers['AuthenticatedRequest'],
+  res: Response
+) => {
   try {
     const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
