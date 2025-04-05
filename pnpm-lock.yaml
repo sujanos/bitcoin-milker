@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@lit-protocol/vincent-sdk':
-        specifier: ^0.0.3
-        version: 0.0.3(typescript@5.8.2)
+        specifier: ^0.0.4
+        version: 0.0.4(typescript@5.8.2)
       consola:
         specifier: ^3.2.3
         version: 3.4.2
@@ -109,8 +109,8 @@ importers:
         specifier: ^7.0.9
         version: 7.0.9
       '@lit-protocol/vincent-sdk':
-        specifier: ^0.0.3
-        version: 0.0.3(typescript@5.8.2)
+        specifier: ^0.0.4
+        version: 0.0.4(typescript@5.8.2)
       '@noble/secp256k1':
         specifier: ^2.2.3
         version: 2.2.3
@@ -191,8 +191,8 @@ importers:
         specifier: ^7.0.9
         version: 7.0.9
       '@lit-protocol/vincent-sdk':
-        specifier: 0.0.2
-        version: 0.0.2(typescript@5.8.2)
+        specifier: 0.0.4
+        version: 0.0.4(typescript@5.8.2)
       '@radix-ui/react-checkbox':
         specifier: ^1.1.4
         version: 1.1.4(@types/react-dom@19.0.4(@types/react@19.0.12))(@types/react@19.0.12)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1372,11 +1372,8 @@ packages:
   '@lit-protocol/uint8arrays@7.0.9':
     resolution: {integrity: sha512-xSfThoFFeEoA0LjXwYISBarVDXQE8keWyiyIcfoYQ/WziOOhSA1W7WVjufagOSaXwTRyO0wb/arogDKL3za2EQ==}
 
-  '@lit-protocol/vincent-sdk@0.0.2':
-    resolution: {integrity: sha512-dmZ5i0/NaQ1rrqj0NaAY2fs7YOgO8eKe6IushVlvNwmzeDX7RzFbxN3JFTb3iQwq4Xq8UoMKrA2xlapER7HSOw==}
-
-  '@lit-protocol/vincent-sdk@0.0.3':
-    resolution: {integrity: sha512-UUuC3SZ0JRWPShUu1eERR9YqaeJBJS9HUIaUoTGLjZPVEC3TCW5lRxDcuTtmmGeaYdgxJVABn9/DiHvplnIeeA==}
+  '@lit-protocol/vincent-sdk@0.0.4':
+    resolution: {integrity: sha512-w/Tv9+z6C0LObFj1mEYlOwMnndiY2ZryxSlOjlksZxRJwczEF/aRNHi3t7KqF54JDFdahh+F1ygfQ9/wWM2bjg==}
 
   '@lit-protocol/wasm@7.0.9':
     resolution: {integrity: sha512-MryQPCn7kGa1DTau2qAEi2m+5VW/24k38jdbfyWMrbCtwX5u2dmqs0mMv2NLOpLt3NCk66RTt87JXO/4qAHtEg==}
@@ -3300,7 +3297,6 @@ packages:
 
   bun@1.2.6:
     resolution: {integrity: sha512-v0G1dOS5ALc4laomafP2h/PjO9qLF7mwzXySo3VJFiX2Ty70WmPjuGRNGdk65Djk0u3ahpFTtCrzsgIj/NDOiw==}
-    cpu: [arm64, x64, aarch64]
     os: [darwin, linux, win32]
     hasBin: true
 
@@ -9332,41 +9328,7 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@lit-protocol/vincent-sdk@0.0.2(typescript@5.8.2)':
-    dependencies:
-      '@lit-protocol/auth-helpers': 7.0.9(typescript@5.8.2)
-      '@lit-protocol/constants': 7.0.9(typescript@5.8.2)
-      '@lit-protocol/lit-node-client': 7.0.9(typescript@5.8.2)
-      '@noble/secp256k1': 2.2.3
-      did-jwt: 8.0.9
-      ethers: 5.7.1
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@deno/kv'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/blob'
-      - '@vercel/kv'
-      - '@walletconnect/modal'
-      - aws4fetch
-      - bufferutil
-      - db0
-      - encoding
-      - ioredis
-      - supports-color
-      - typescript
-      - uploadthing
-      - utf-8-validate
-
-  '@lit-protocol/vincent-sdk@0.0.3(typescript@5.8.2)':
+  '@lit-protocol/vincent-sdk@0.0.4(typescript@5.8.2)':
     dependencies:
       '@lit-protocol/auth-helpers': 7.0.9(typescript@5.8.2)
       '@lit-protocol/constants': 7.0.9(typescript@5.8.2)
