@@ -66,7 +66,8 @@ async function addApproval({
     tokenIn: WETH_ADDRESS!,
   });
 
-  consola.debug('ERC20 Approval Vincent Tool Response:', toolExecutionResult);
+  consola.trace('ERC20 Approval Vincent Tool Response:', toolExecutionResult);
+  consola.log('Logs from approval tool exec:', toolExecutionResult.logs);
 
   const approvalResult = JSON.parse(toolExecutionResult.response as string);
   if (approvalResult.status === 'success' && approvalResult.approvalTxHash) {
@@ -144,7 +145,8 @@ async function handleSwapExecution({
     tokenOut: topCoin.coinAddress,
   });
 
-  consola.debug('Swap Vicent Tool Response:', uniswapSwapToolResponse);
+  consola.trace('Swap Vincent Tool Response:', uniswapSwapToolResponse);
+  consola.log('Logs from swap tool exec:', uniswapSwapToolResponse.logs);
 
   const swapResult = JSON.parse(uniswapSwapToolResponse.response as string);
 
