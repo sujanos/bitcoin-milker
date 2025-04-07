@@ -14,26 +14,22 @@ const estimateGasForSwap = async (
   amountInSmallestUnit: ethers.BigNumber,
   amountOutMin: ethers.BigNumber
 ) => {
-  let estimatedGas = await uniswapV3RouterContract.estimateGas.exactInputSingle(
-    [
-      tokenInAddress,
-      tokenOutAddress,
-      uniswapV3PoolFee,
-      pkpEthAddress,
-      amountInSmallestUnit,
-      amountOutMin,
-      0,
-    ],
-    { from: pkpEthAddress }
-  );
-
-  // Add 10% buffer to estimated gas
-  estimatedGas = estimatedGas.mul(110).div(100);
-
   // Get current gas data
-  const [block, gasPrice] = await Promise.all([
+  const [block, gasPrice, estimatedGas] = await Promise.all([
     uniswapV3RouterContract.provider.getBlock('latest'),
     uniswapV3RouterContract.provider.getGasPrice(),
+    uniswapV3RouterContract.estimateGas.exactInputSingle(
+      [
+        tokenInAddress,
+        tokenOutAddress,
+        uniswapV3PoolFee,
+        pkpEthAddress,
+        amountInSmallestUnit,
+        amountOutMin,
+        0,
+      ],
+      { from: pkpEthAddress }
+    ),
   ]);
 
   // Use a more conservative max fee per gas calculation
@@ -41,10 +37,13 @@ const estimateGasForSwap = async (
   const maxFeePerGas = baseFeePerGas.mul(150).div(100); // 1.5x base fee
   const maxPriorityFeePerGas = gasPrice.div(10); // 0.1x gas price
 
+  // Add 10% buffer to estimated gas
+  const estimatedGasWithBuffer = estimatedGas.mul(110).div(100);
+
   return {
-    estimatedGas,
     maxFeePerGas,
     maxPriorityFeePerGas,
+    estimatedGas: estimatedGasWithBuffer,
   };
 };
 

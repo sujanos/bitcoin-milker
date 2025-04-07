@@ -4,6 +4,7 @@ import consola from 'consola';
 import { ethers } from 'ethers';
 
 import { getAddressesByChainId } from './get-addresses-by-chain-id';
+import { getERC20Contract } from './get-erc20-info';
 
 const estimateGasForApproval = async (
   tokenInContract: ethers.Contract,
@@ -11,20 +12,16 @@ const estimateGasForApproval = async (
   amountInSmallestUnit: ethers.BigNumber,
   pkpEthAddress: string
 ) => {
-  let estimatedGas = await tokenInContract.estimateGas.approve(
-    uniswapV3RouterAddress,
-    amountInSmallestUnit,
-    { from: pkpEthAddress }
-  );
-
-  // Add 10% buffer to estimated gas
-  estimatedGas = estimatedGas.mul(110).div(100);
-
   // Get current gas data
-  const [block, gasPrice] = await Promise.all([
+  const [block, gasPrice, estimatedGas] = await Promise.all([
     tokenInContract.provider.getBlock('latest'),
     tokenInContract.provider.getGasPrice(),
+    tokenInContract.estimateGas.approve(uniswapV3RouterAddress, amountInSmallestUnit, {
+      from: pkpEthAddress,
+    }),
   ]);
+  // Add 10% buffer to estimated gas
+  const estimatedGasWithBuffer = estimatedGas.mul(110).div(100);
 
   // Use a more conservative max fee per gas calculation
   const baseFeePerGas = block.baseFeePerGas || gasPrice;
@@ -32,9 +29,9 @@ const estimateGasForApproval = async (
   const maxPriorityFeePerGas = gasPrice.div(10); // 0.1x gas price
 
   return {
-    estimatedGas,
     maxFeePerGas,
     maxPriorityFeePerGas,
+    estimatedGas: estimatedGasWithBuffer,
   };
 };
 
@@ -48,11 +45,7 @@ export const getEstimatedGasForApproval = async (
 ) => {
   const { UNISWAP_V3_ROUTER } = getAddressesByChainId(userChainId);
 
-  const tokenInContract = new ethers.Contract(
-    tokenInAddress,
-    ['function approve(address,uint256) external returns (bool)'],
-    userRpcProvider
-  );
+  const tokenInContract = getERC20Contract(tokenInAddress, userRpcProvider);
 
   // Convert amountIn to token's smallest unit using input token's decimals
   const amountInSmallestUnit = ethers.utils.parseUnits(amountIn, tokenInDecimals);
