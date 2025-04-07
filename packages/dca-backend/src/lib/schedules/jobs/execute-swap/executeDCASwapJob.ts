@@ -173,7 +173,7 @@ async function executeDCASwapJob({ scheduleId }: ExecuteDCASwapJobParams): Promi
   try {
     // Fetch top coin first to get the target token
     consola.debug('Fetching top coin...');
-    const topCoin = (await getTopBaseMemeCoin()) as unknown as Coin;
+    const topCoin = await getTopBaseMemeCoin();
     consola.debug('Got top coin:', topCoin);
 
     const schedule = await Schedule.findById(scheduleId).orFail().lean();
