@@ -117,22 +117,12 @@ export const ActiveDcas: React.FC = () => {
   useEffect(() => {
     const fetchDCAs = async () => {
       try {
-        const fetchDelay = 500;
-        const startTime = Date.now();
-
         const dcas = await getDCAs();
-        const elapsedTime = Date.now() - startTime;
 
         setActiveDCAs(dcas);
-
-        const remainingTime = fetchDelay - elapsedTime;
-        if (remainingTime > 0) {
-          setTimeout(() => setIsLoading(false), remainingTime);
-        } else {
-          setIsLoading(false);
-        }
       } catch (error) {
         console.error('Error fetching active DCAs:', error);
+      } finally {
         setIsLoading(false);
       }
     };
