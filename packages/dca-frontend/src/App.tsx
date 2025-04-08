@@ -9,9 +9,6 @@ import { Login } from '@/pages/login';
 function AppContent() {
   const { authInfo } = useContext(JwtContext);
 
-  if (authInfo === undefined) {
-    return null; // TODO loading
-  }
   return authInfo ? <Home /> : <Login />;
 }
 

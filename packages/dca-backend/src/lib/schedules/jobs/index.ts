@@ -1,3 +1,3 @@
-import * as executeSwap from './execute-swap/execute-swap';
+import * as executeSwap from './execute-swap/executeDCASwapJob';
 
 export { executeSwap };

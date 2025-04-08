@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { Types } from 'mongoose';
 
 import { disableJob, enableJob } from '../../scheduleManager/jobs';
@@ -10,13 +10,14 @@ import {
 } from '../../scheduleManager/schedules';
 import { CreateScheduleParams, EditScheduleParams } from '../../types';
 
-function getWalletAddressFromRequest(req: Request): string | undefined {
-  return req.user?.pkp.address;
-}
+import type { ExpressAuthHelpers } from '@lit-protocol/vincent-sdk';
 
-export const handleListSchedulesRoute = async (req: Request, res: Response) => {
+export const handleListSchedulesRoute = async (
+  req: ExpressAuthHelpers['AuthenticatedRequest'],
+  res: Response
+) => {
   try {
-    const walletAddress = getWalletAddressFromRequest(req);
+    const walletAddress = req.user.pkpAddress;
 
     if (!walletAddress) {
       res.status(400).json({ error: 'No wallet address provided' });
@@ -25,22 +26,18 @@ export const handleListSchedulesRoute = async (req: Request, res: Response) => {
 
     const schedules = await listSchedules({ walletAddress });
 
-    if (!schedules || schedules.length === 0) {
-      res.status(404).json({
-        error: `No DCA schedules found for wallet address ${walletAddress}`,
-      });
-      return;
-    }
-
     res.json({ data: schedules, success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
 };
 
-export const handleCreateScheduleRoute = async (req: Request, res: Response) => {
+export const handleCreateScheduleRoute = async (
+  req: ExpressAuthHelpers['AuthenticatedRequest'],
+  res: Response
+) => {
   try {
-    const walletAddress = getWalletAddressFromRequest(req);
+    const walletAddress = req.user.pkpAddress;
 
     if (!walletAddress) {
       res.status(400).json({ error: 'No wallet address provided' });
@@ -56,9 +53,12 @@ export const handleCreateScheduleRoute = async (req: Request, res: Response) => 
   }
 };
 
-export const handleEditScheduleRoute = async (req: Request, res: Response) => {
+export const handleEditScheduleRoute = async (
+  req: ExpressAuthHelpers['AuthenticatedRequest'],
+  res: Response
+) => {
   try {
-    const walletAddress = getWalletAddressFromRequest(req);
+    const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
     if (!walletAddress) {
@@ -75,9 +75,12 @@ export const handleEditScheduleRoute = async (req: Request, res: Response) => {
   }
 };
 
-export const handleDisableScheduleRoute = async (req: Request, res: Response) => {
+export const handleDisableScheduleRoute = async (
+  req: ExpressAuthHelpers['AuthenticatedRequest'],
+  res: Response
+) => {
   try {
-    const walletAddress = getWalletAddressFromRequest(req);
+    const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
     if (!walletAddress) {
@@ -97,9 +100,12 @@ export const handleDisableScheduleRoute = async (req: Request, res: Response) =>
   }
 };
 
-export const handleEnableScheduleRoute = async (req: Request, res: Response) => {
+export const handleEnableScheduleRoute = async (
+  req: ExpressAuthHelpers['AuthenticatedRequest'],
+  res: Response
+) => {
   try {
-    const walletAddress = getWalletAddressFromRequest(req);
+    const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
     if (!walletAddress) {
@@ -115,9 +121,12 @@ export const handleEnableScheduleRoute = async (req: Request, res: Response) => 
   }
 };
 
-export const handleDeleteScheduleRoute = async (req: Request, res: Response) => {
+export const handleDeleteScheduleRoute = async (
+  req: ExpressAuthHelpers['AuthenticatedRequest'],
+  res: Response
+) => {
   try {
-    const walletAddress = getWalletAddressFromRequest(req);
+    const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
     if (!walletAddress) {

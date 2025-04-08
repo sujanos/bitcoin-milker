@@ -1,7 +1,8 @@
 import cors from 'cors';
 import express, { Express } from 'express';
 
-import { authenticateUser } from './auth';
+import { expressAuthHelpers } from '@lit-protocol/vincent-sdk';
+
 import { handleListPurchasesRoute } from './purchases';
 import {
   handleListSchedulesRoute,
@@ -14,32 +15,15 @@ import {
 import { env } from '../../env';
 import { serviceLogger } from '../../logger';
 
-const { CORS_ALLOWED_DOMAIN, IS_DEVELOPMENT } = env;
+const { ALLOWED_AUDIENCE, CORS_ALLOWED_DOMAIN, IS_DEVELOPMENT } = env;
+
+const { authenticatedRequestHandler, getAuthenticateUserExpressHandler } = expressAuthHelpers;
+
+const authenticateUserMiddleware = getAuthenticateUserExpressHandler(ALLOWED_AUDIENCE);
 
 const corsConfig = {
   optionsSuccessStatus: 204,
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    if (!origin) {
-      callback(new Error('Not allowed by CORS'));
-      return;
-    }
-
-    const allowedOrigins = [
-      // eslint-disable-next-line no-useless-escape
-      new RegExp(`^https?:\/\/${CORS_ALLOWED_DOMAIN}$`),
-    ];
-
-    if (IS_DEVELOPMENT) {
-      // localhost with any port only allowed when not running in production
-      allowedOrigins.push(/^https?:\/\/localhost(:\d+)?$/);
-    }
-
-    if (allowedOrigins.some((regex) => regex.test(origin))) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: IS_DEVELOPMENT ? true : [CORS_ALLOWED_DOMAIN],
 };
 
 export const registerRoutes = (app: Express) => {
@@ -52,13 +36,41 @@ export const registerRoutes = (app: Express) => {
   }
   app.use(cors(corsConfig));
 
-  app.get('/purchases', authenticateUser, handleListPurchasesRoute);
-  app.get('/schedules', authenticateUser, handleListSchedulesRoute);
-  app.post('/schedule', authenticateUser, handleCreateScheduleRoute);
-  app.put('/schedules/:scheduleId', authenticateUser, handleEditScheduleRoute);
-  app.put('/schedules/:scheduleId/enable', authenticateUser, handleEnableScheduleRoute);
-  app.put('/schedules/:scheduleId/disable', authenticateUser, handleDisableScheduleRoute);
-  app.delete('/schedules/:scheduleId', authenticateUser, handleDeleteScheduleRoute);
+  app.get(
+    '/purchases',
+    authenticateUserMiddleware,
+    authenticatedRequestHandler(handleListPurchasesRoute)
+  );
+  app.get(
+    '/schedules',
+    authenticateUserMiddleware,
+    authenticatedRequestHandler(handleListSchedulesRoute)
+  );
+  app.post(
+    '/schedule',
+    authenticateUserMiddleware,
+    authenticatedRequestHandler(handleCreateScheduleRoute)
+  );
+  app.put(
+    '/schedules/:scheduleId',
+    authenticateUserMiddleware,
+    authenticatedRequestHandler(handleEditScheduleRoute)
+  );
+  app.put(
+    '/schedules/:scheduleId/enable',
+    authenticateUserMiddleware,
+    authenticatedRequestHandler(handleEnableScheduleRoute)
+  );
+  app.put(
+    '/schedules/:scheduleId/disable',
+    authenticateUserMiddleware,
+    authenticatedRequestHandler(handleDisableScheduleRoute)
+  );
+  app.delete(
+    '/schedules/:scheduleId',
+    authenticateUserMiddleware,
+    authenticatedRequestHandler(handleDeleteScheduleRoute)
+  );
 
   serviceLogger.info(`Routes registered`);
 };

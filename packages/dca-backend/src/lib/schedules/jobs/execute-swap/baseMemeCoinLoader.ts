@@ -18,6 +18,19 @@ export interface Coin {
   symbol: string;
 }
 
+export function assertIsCoin(value: unknown): asserts value is Coin {
+  if (
+    typeof value !== 'object' ||
+    value === null ||
+    typeof (value as Coin).coinAddress !== 'string' ||
+    typeof (value as Coin).name !== 'string' ||
+    typeof (value as Coin).price !== 'string' ||
+    typeof (value as Coin).symbol !== 'string'
+  ) {
+    throw new Error('Value is not a valid Coin object');
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function batchLoadFn(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -85,6 +98,9 @@ export const getTopBaseMemeCoin = async () => {
   logger.debug(`getTopBaseMemeCoin()`);
 
   const topCoins = (await loader.load('topCoins')).coins;
-  logger.debug(`topCoins: ${JSON.stringify(topCoins)}`);
+  logger.debug(
+    `Loaded ${topCoins.length} coins from CoinRanking API - top coin is ${topCoins[0].name}`
+  );
+  assertIsCoin(topCoins[0]);
   return topCoins[0];
 };
