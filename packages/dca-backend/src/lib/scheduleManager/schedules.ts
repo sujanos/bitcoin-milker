@@ -18,7 +18,15 @@ export const listSchedules = async (params: { walletAddress: string }) => {
   return Promise.all(
     schedules.map(async (schedule) => {
       const job = await findJob({ scheduleId: schedule._id });
-      return { ...schedule, active: !job.attrs.disabled };
+      return {
+        ...schedule,
+        active: !job.attrs.disabled,
+        failedAt: job.attrs.failedAt,
+        failedReason: job.attrs.failReason,
+        lastFinishedAt: job.attrs.lastFinishedAt,
+        lastRunAt: job.attrs.lastRunAt,
+        nextRunAt: job.attrs.nextRunAt,
+      };
     })
   );
 };
@@ -102,7 +110,17 @@ export const editSchedule = async (params: EditScheduleParams) => {
     { interval }
   );
 
-  return { job, schedule: updatedSchedule };
+  return {
+    schedule: {
+      ...updatedSchedule,
+      active: !job.attrs.disabled,
+      failedAt: job.attrs.failedAt,
+      failedReason: job.attrs.failReason,
+      lastFinishedAt: job.attrs.lastFinishedAt,
+      lastRunAt: job.attrs.lastRunAt,
+      nextRunAt: job.attrs.nextRunAt,
+    },
+  };
 };
 
 export const deleteSchedule = async (params: DeleteScheduleParams) => {

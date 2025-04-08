@@ -17,6 +17,11 @@ export interface DCA extends CreateDCARequest {
   active: boolean;
   enabledAt: string;
   updatedAt: string;
+  failedAt: string;
+  failedReason: string;
+  lastFinishedAt: string;
+  lastRunAt: string;
+  nextRunAt: string;
 }
 
 export const useBackend = () => {

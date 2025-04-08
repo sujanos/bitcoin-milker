@@ -17,6 +17,9 @@ import {
 import { DialogueEditDCA } from '@/components/dialogue-edit-dca';
 import { FREQUENCIES } from '@/components/select-frequency';
 import { Spinner } from '@/components/ui/spinner';
+import { DialogueDcaFailedDetails } from '@/components/dialogue-dca-failed-details';
+
+import { cn } from '@/lib/utils';
 
 function renderDCASchedulesTable(
   activeDCAs: DCA[],
@@ -41,6 +44,11 @@ function renderDCASchedulesTable(
         {activeDCAs.map((dca) => {
           const uniqueKey = dca._id;
 
+          const failedAfterLastRun =
+            dca.failedAt && dca.lastFinishedAt
+              ? new Date(dca.lastFinishedAt) <= new Date(dca.failedAt)
+              : false;
+
           return (
             <TableRow key={uniqueKey}>
               <TableCell>${dca.purchaseAmount}</TableCell>
@@ -50,7 +58,15 @@ function renderDCASchedulesTable(
               </TableCell>
               <TableCell>{new Date(dca.updatedAt).toLocaleString()}</TableCell>
               <TableCell>
-                <span>{dca.active ? 'Active' : 'Inactive'}</span>
+                <span
+                  className={cn(
+                    dca.active && !failedAfterLastRun && 'text-green-500',
+                    dca.active && failedAfterLastRun && 'text-red-500'
+                  )}
+                >
+                  {!dca.active ? 'Inactive' : failedAfterLastRun ? 'Failed' : 'Active'}
+                  {failedAfterLastRun && <DialogueDcaFailedDetails dca={dca} />}
+                </span>
               </TableCell>
               <TableCell>
                 <Box className="flex flex-row items-center justify-end gap-2 p-1">
