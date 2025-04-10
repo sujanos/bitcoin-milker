@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@lit-protocol/vincent-sdk':
-        specifier: 0.0.4-beta.3
-        version: 0.0.4-beta.3(typescript@5.8.2)
+        specifier: 0.0.4-beta.4
+        version: 0.0.4-beta.4(typescript@5.8.2)
       consola:
         specifier: ^3.2.3
         version: 3.4.2
@@ -109,8 +109,8 @@ importers:
         specifier: ^7.0.9
         version: 7.0.9
       '@lit-protocol/vincent-sdk':
-        specifier: 0.0.4-beta.3
-        version: 0.0.4-beta.3(typescript@5.8.2)
+        specifier: 0.0.4-beta.4
+        version: 0.0.4-beta.4(typescript@5.8.2)
       '@noble/secp256k1':
         specifier: ^2.2.3
         version: 2.2.3
@@ -191,8 +191,8 @@ importers:
         specifier: ^7.0.9
         version: 7.0.9
       '@lit-protocol/vincent-sdk':
-        specifier: 0.0.4-beta.3
-        version: 0.0.4-beta.3(typescript@5.8.2)
+        specifier: 0.0.4-beta.4
+        version: 0.0.4-beta.4(typescript@5.8.2)
       '@radix-ui/react-checkbox':
         specifier: ^1.1.4
         version: 1.1.4(@types/react-dom@19.0.4(@types/react@19.0.12))(@types/react@19.0.12)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1372,8 +1372,8 @@ packages:
   '@lit-protocol/uint8arrays@7.0.9':
     resolution: {integrity: sha512-xSfThoFFeEoA0LjXwYISBarVDXQE8keWyiyIcfoYQ/WziOOhSA1W7WVjufagOSaXwTRyO0wb/arogDKL3za2EQ==}
 
-  '@lit-protocol/vincent-sdk@0.0.4-beta.3':
-    resolution: {integrity: sha512-0bsogv+s/wYy3vjLsdpie+/F+thhNcueZoXYerkYUEhpcWt0U1nXrRZe5nfgERbLDzmJOvRkx3Yi5sNNmoje3w==}
+  '@lit-protocol/vincent-sdk@0.0.4-beta.4':
+    resolution: {integrity: sha512-thj6IQo8ppTNd4zvK5IghuSm3fxJzMb5WGswv4P5lwLB0XJlaXfL6+FI1oO5JrS4L7S7lffffuPYopcWf6CE6A==}
     engines: {node: 20.11.1}
 
   '@lit-protocol/wasm@7.0.9':
@@ -2998,7 +2998,7 @@ packages:
 
   '@walletconnect/sign-client@2.9.2':
     resolution: {integrity: sha512-anRwnXKlR08lYllFMEarS01hp1gr6Q9XUgvacr749hoaC/AwGVlxYFdM8+MyYr3ozlA+2i599kjbK/mAebqdXg==}
-    deprecated: Reliability and performance greatly improved - please see https://github.com/WalletConnect/walletconnect-monorepo/releases
+    deprecated: 'Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases'
 
   '@walletconnect/time@1.0.2':
     resolution: {integrity: sha512-uzdd9woDcJ1AaBZRhqy5rNC9laqWGErfc4dxA9a87mPdKOgWMD85mcFo9dIYIts/Jwocfwn07EC6EzclKubk/g==}
@@ -3298,7 +3298,6 @@ packages:
 
   bun@1.2.6:
     resolution: {integrity: sha512-v0G1dOS5ALc4laomafP2h/PjO9qLF7mwzXySo3VJFiX2Ty70WmPjuGRNGdk65Djk0u3ahpFTtCrzsgIj/NDOiw==}
-    cpu: [arm64, x64, aarch64]
     os: [darwin, linux, win32]
     hasBin: true
 
@@ -9330,7 +9329,7 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@lit-protocol/vincent-sdk@0.0.4-beta.3(typescript@5.8.2)':
+  '@lit-protocol/vincent-sdk@0.0.4-beta.4(typescript@5.8.2)':
     dependencies:
       '@lit-protocol/auth-helpers': 7.0.9(typescript@5.8.2)
       '@lit-protocol/constants': 7.0.9(typescript@5.8.2)
