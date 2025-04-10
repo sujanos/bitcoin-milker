@@ -1,4 +1,6 @@
 import { useContext } from 'react';
+import { Buffer } from 'buffer';
+globalThis.Buffer = Buffer;
 
 import './App.css';
 
