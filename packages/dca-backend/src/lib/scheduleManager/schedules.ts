@@ -6,11 +6,8 @@ import { getAgenda } from '../schedules/agendaClient';
 import { executeSwap } from '../schedules/jobs';
 import { CreateScheduleParams, DeleteScheduleParams, EditScheduleParams } from '../types';
 import { cancelJob, findJob, scheduleJob } from './jobs';
-import { env } from '../env';
 
 const logger = consola.withTag('ScheduleManager');
-
-const { VINCENT_APP_VERSION } = env;
 
 export const listSchedules = async (params: { walletAddress: string }) => {
   const { walletAddress } = params;
@@ -72,7 +69,7 @@ export const createSchedule = async (params: CreateScheduleParams) => {
     {
       name,
       scheduleId: schedule._id,
-      vincentAppVersion: VINCENT_APP_VERSION,
+      vincentAppVersion: 11,
       walletAddress: params.walletAddress,
     },
     { interval }
@@ -119,7 +116,7 @@ export const editSchedule = async (params: EditScheduleParams) => {
     {
       name,
       scheduleId: updatedSchedule._id,
-      vincentAppVersion: VINCENT_APP_VERSION,
+      vincentAppVersion: 11,
       walletAddress: params.walletAddress,
     },
     { interval }
