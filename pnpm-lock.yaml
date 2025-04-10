@@ -109,8 +109,8 @@ importers:
         specifier: ^7.0.9
         version: 7.0.9
       '@lit-protocol/vincent-sdk':
-        specifier: 0.0.4-beta.5
-        version: 0.0.4-beta.5(typescript@5.8.2)
+        specifier: 0.0.5
+        version: 0.0.5(typescript@5.8.2)
       '@noble/secp256k1':
         specifier: ^2.2.3
         version: 2.2.3
@@ -191,8 +191,8 @@ importers:
         specifier: ^7.0.9
         version: 7.0.9
       '@lit-protocol/vincent-sdk':
-        specifier: 0.0.4-beta.5
-        version: 0.0.4-beta.5(typescript@5.8.2)
+        specifier: 0.0.5
+        version: 0.0.5(typescript@5.8.2)
       '@radix-ui/react-checkbox':
         specifier: ^1.1.4
         version: 1.1.4(@types/react-dom@19.0.4(@types/react@19.0.12))(@types/react@19.0.12)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1371,10 +1371,6 @@ packages:
 
   '@lit-protocol/uint8arrays@7.0.9':
     resolution: {integrity: sha512-xSfThoFFeEoA0LjXwYISBarVDXQE8keWyiyIcfoYQ/WziOOhSA1W7WVjufagOSaXwTRyO0wb/arogDKL3za2EQ==}
-
-  '@lit-protocol/vincent-sdk@0.0.4-beta.5':
-    resolution: {integrity: sha512-NKov0iRN11BNat/1H5PMRM9EM8zsHvSfKHsZe4sU0BE3UJOE50LlMId3Ox2sRvYSIYCcv2AY3tDToEvkrHJQmA==}
-    engines: {node: 20.11.1}
 
   '@lit-protocol/vincent-sdk@0.0.5':
     resolution: {integrity: sha512-VbemAoEOHE1UdGPi5RaJviNustWegE0N8/4bKgBJb7Z66zocE3TTa6bidBpAVVZNTi/iTUntHHPM76J7Yp78pg==}
@@ -9332,41 +9328,6 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - typescript
-      - utf-8-validate
-
-  '@lit-protocol/vincent-sdk@0.0.4-beta.5(typescript@5.8.2)':
-    dependencies:
-      '@lit-protocol/auth-helpers': 7.0.9(typescript@5.8.2)
-      '@lit-protocol/constants': 7.0.9(typescript@5.8.2)
-      '@lit-protocol/lit-node-client': 7.0.9(typescript@5.8.2)
-      '@noble/secp256k1': 2.2.3
-      did-jwt: 8.0.9
-      ethers: 5.7.1
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@deno/kv'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/blob'
-      - '@vercel/kv'
-      - '@walletconnect/modal'
-      - aws4fetch
-      - bufferutil
-      - db0
-      - encoding
-      - ioredis
-      - supports-color
-      - typescript
-      - uploadthing
       - utf-8-validate
 
   '@lit-protocol/vincent-sdk@0.0.5(typescript@5.8.2)':
