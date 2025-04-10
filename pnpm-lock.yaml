@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@lit-protocol/vincent-sdk':
-        specifier: 0.0.4-beta.5
-        version: 0.0.4-beta.5(typescript@5.8.2)
+        specifier: 0.0.5
+        version: 0.0.5(typescript@5.8.2)
       consola:
         specifier: ^3.2.3
         version: 3.4.2
@@ -1374,6 +1374,10 @@ packages:
 
   '@lit-protocol/vincent-sdk@0.0.4-beta.5':
     resolution: {integrity: sha512-NKov0iRN11BNat/1H5PMRM9EM8zsHvSfKHsZe4sU0BE3UJOE50LlMId3Ox2sRvYSIYCcv2AY3tDToEvkrHJQmA==}
+    engines: {node: 20.11.1}
+
+  '@lit-protocol/vincent-sdk@0.0.5':
+    resolution: {integrity: sha512-VbemAoEOHE1UdGPi5RaJviNustWegE0N8/4bKgBJb7Z66zocE3TTa6bidBpAVVZNTi/iTUntHHPM76J7Yp78pg==}
     engines: {node: 20.11.1}
 
   '@lit-protocol/wasm@7.0.9':
@@ -9331,6 +9335,41 @@ snapshots:
       - utf-8-validate
 
   '@lit-protocol/vincent-sdk@0.0.4-beta.5(typescript@5.8.2)':
+    dependencies:
+      '@lit-protocol/auth-helpers': 7.0.9(typescript@5.8.2)
+      '@lit-protocol/constants': 7.0.9(typescript@5.8.2)
+      '@lit-protocol/lit-node-client': 7.0.9(typescript@5.8.2)
+      '@noble/secp256k1': 2.2.3
+      did-jwt: 8.0.9
+      ethers: 5.7.1
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - '@azure/app-configuration'
+      - '@azure/cosmos'
+      - '@azure/data-tables'
+      - '@azure/identity'
+      - '@azure/keyvault-secrets'
+      - '@azure/storage-blob'
+      - '@capacitor/preferences'
+      - '@deno/kv'
+      - '@netlify/blobs'
+      - '@planetscale/database'
+      - '@react-native-async-storage/async-storage'
+      - '@upstash/redis'
+      - '@vercel/blob'
+      - '@vercel/kv'
+      - '@walletconnect/modal'
+      - aws4fetch
+      - bufferutil
+      - db0
+      - encoding
+      - ioredis
+      - supports-color
+      - typescript
+      - uploadthing
+      - utf-8-validate
+
+  '@lit-protocol/vincent-sdk@0.0.5(typescript@5.8.2)':
     dependencies:
       '@lit-protocol/auth-helpers': 7.0.9(typescript@5.8.2)
       '@lit-protocol/constants': 7.0.9(typescript@5.8.2)
