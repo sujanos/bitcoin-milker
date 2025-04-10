@@ -11,13 +11,14 @@ import {
   getEstimatedUniswapCosts,
 } from './utils';
 import { getERC20Contract, getExistingUniswapAllowance } from './utils/get-erc20-info';
-import { erc20ApprovalToolClient, uniswapToolClient } from './vincentTools';
+import { getErc20ApprovalToolClient, getUniswapToolClient } from './vincentTools';
 import { env } from '../../../env';
 import { PurchasedCoin } from '../../../mongo/models/PurchasedCoin';
 import { Schedule } from '../../../mongo/models/Schedule';
 
 export interface ExecuteDCASwapJobParams {
   scheduleId: Types.ObjectId;
+  vincentAppVersion: number;
 }
 
 const { BASE_RPC_URL } = env;
@@ -58,6 +59,7 @@ async function addApproval({
     );
   }
 
+  const erc20ApprovalToolClient = getErc20ApprovalToolClient({ vincentAppVersion: 11 });
   const toolExecutionResult = await erc20ApprovalToolClient.execute({
     amountIn: (wethAmount * 5).toFixed(18).toString(), // Approve 5x the amount to spend so we don't wait for approval tx's every time we run
     chainId: BASE_CHAIN_ID,
@@ -136,6 +138,7 @@ async function handleSwapExecution({
     );
   }
 
+  const uniswapToolClient = getUniswapToolClient({ vincentAppVersion: 11 });
   const uniswapSwapToolResponse = await uniswapToolClient.execute({
     amountIn: wethAmount.toFixed(18).toString(),
     chainId: BASE_CHAIN_ID,
