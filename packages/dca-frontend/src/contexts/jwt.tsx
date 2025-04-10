@@ -66,7 +66,8 @@ export const JwtProvider: React.FC<JwtProviderProps> = ({ children }) => {
           logOut();
           return;
         }
-      } catch {
+      } catch (e) {
+        console.error('Error decoding JWT:', e);
         logOut();
         return;
       }
