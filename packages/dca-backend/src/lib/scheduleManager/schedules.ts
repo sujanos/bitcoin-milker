@@ -62,10 +62,16 @@ export const createSchedule = async (params: CreateScheduleParams) => {
   const job = await scheduleJob<{
     name: string;
     scheduleId: Types.ObjectId;
+    vincentAppVersion: number;
     walletAddress: string;
   }>(
     executeSwap.jobName,
-    { name, scheduleId: schedule._id, walletAddress: params.walletAddress },
+    {
+      name,
+      scheduleId: schedule._id,
+      vincentAppVersion: 11,
+      walletAddress: params.walletAddress,
+    },
     { interval }
   );
 
@@ -103,10 +109,16 @@ export const editSchedule = async (params: EditScheduleParams) => {
   const job = await scheduleJob<{
     name: string;
     scheduleId: Types.ObjectId;
+    vincentAppVersion: number;
     walletAddress: string;
   }>(
     executeSwap.jobName,
-    { name, scheduleId: updatedSchedule._id, walletAddress: params.walletAddress },
+    {
+      name,
+      scheduleId: updatedSchedule._id,
+      vincentAppVersion: 11,
+      walletAddress: params.walletAddress,
+    },
     { interval }
   );
 

@@ -13,7 +13,7 @@ export async function startWorker() {
   agenda.define(executeSwap.jobName, async (job: Job<ExecuteDCASwapJobParams>) => {
     const {
       attrs: {
-        data: { scheduleId },
+        data: { scheduleId, vincentAppVersion },
       },
     } = job;
 
@@ -21,6 +21,7 @@ export async function startWorker() {
 
     await executeSwap.processJob({
       scheduleId,
+      vincentAppVersion,
     });
   });
 

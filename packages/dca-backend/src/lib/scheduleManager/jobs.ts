@@ -51,7 +51,9 @@ export const cancelJob = async ({ scheduleId }: Pick<JobParams, 'scheduleId'>) =
  * @param options Scheduling options
  * @returns The scheduled job
  */
-export async function scheduleJob<T extends { scheduleId: Types.ObjectId }>(
+export async function scheduleJob<
+  T extends { scheduleId: Types.ObjectId; vincentAppVersion: number },
+>(
   name: string,
   data: T,
   options: {
