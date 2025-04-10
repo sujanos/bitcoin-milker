@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@lit-protocol/vincent-sdk':
-        specifier: 0.0.4-beta.1
-        version: 0.0.4-beta.1(typescript@5.8.2)
+        specifier: 0.0.4-beta.2
+        version: 0.0.4-beta.2(typescript@5.8.2)
       consola:
         specifier: ^3.2.3
         version: 3.4.2
@@ -109,8 +109,8 @@ importers:
         specifier: ^7.0.9
         version: 7.0.9
       '@lit-protocol/vincent-sdk':
-        specifier: 0.0.4-beta.1
-        version: 0.0.4-beta.1(typescript@5.8.2)
+        specifier: 0.0.4-beta.2
+        version: 0.0.4-beta.2(typescript@5.8.2)
       '@noble/secp256k1':
         specifier: ^2.2.3
         version: 2.2.3
@@ -191,8 +191,8 @@ importers:
         specifier: ^7.0.9
         version: 7.0.9
       '@lit-protocol/vincent-sdk':
-        specifier: 0.0.4-beta.1
-        version: 0.0.4-beta.1(typescript@5.8.2)
+        specifier: 0.0.4-beta.2
+        version: 0.0.4-beta.2(typescript@5.8.2)
       '@radix-ui/react-checkbox':
         specifier: ^1.1.4
         version: 1.1.4(@types/react-dom@19.0.4(@types/react@19.0.12))(@types/react@19.0.12)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1372,8 +1372,8 @@ packages:
   '@lit-protocol/uint8arrays@7.0.9':
     resolution: {integrity: sha512-xSfThoFFeEoA0LjXwYISBarVDXQE8keWyiyIcfoYQ/WziOOhSA1W7WVjufagOSaXwTRyO0wb/arogDKL3za2EQ==}
 
-  '@lit-protocol/vincent-sdk@0.0.4-beta.1':
-    resolution: {integrity: sha512-bSdWKL7/TcVGyXRusTKrA3/C7Smmrb4iVo7hDWtE9+XOSuc3prO1Zkw92qRZHLilAoV/saLAN+QDxmtP/B0o5w==}
+  '@lit-protocol/vincent-sdk@0.0.4-beta.2':
+    resolution: {integrity: sha512-Gx/Q8QiefKf6e0JkSyEx16ujS94ZY8vFcOfRhAbVkwTTbt6VRuQ9IDAS+c6Au+Ok1bmN6yd7/39jYzkVGrp/Aw==}
     engines: {node: 20.11.1}
 
   '@lit-protocol/wasm@7.0.9':
@@ -9330,7 +9330,7 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@lit-protocol/vincent-sdk@0.0.4-beta.1(typescript@5.8.2)':
+  '@lit-protocol/vincent-sdk@0.0.4-beta.2(typescript@5.8.2)':
     dependencies:
       '@lit-protocol/auth-helpers': 7.0.9(typescript@5.8.2)
       '@lit-protocol/constants': 7.0.9(typescript@5.8.2)
