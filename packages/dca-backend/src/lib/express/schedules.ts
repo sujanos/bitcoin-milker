@@ -17,7 +17,7 @@ export const handleListSchedulesRoute = async (
 
     const schedules = await listJobsByWalletAddress({ walletAddress });
 
-    res.json({ data: schedules, success: true });
+    res.json({ data: schedules.map((sched) => sched.toJson()), success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
@@ -32,8 +32,11 @@ export const handleCreateScheduleRoute = async (
 
     const scheduleParams = ScheduleParamsSchema.parse({ ...req.body, walletAddress });
 
-    const schedule = await createJob({ ...scheduleParams, vincentAppVersion: 11 });
-    res.status(201).json({ data: schedule, success: true });
+    const schedule = await createJob(
+      { ...scheduleParams, vincentAppVersion: 11 },
+      { interval: scheduleParams.purchaseIntervalHuman }
+    );
+    res.status(201).json({ data: schedule.toJson(), success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
@@ -49,8 +52,11 @@ export const handleEditScheduleRoute = async (
 
     const scheduleParams = ScheduleParamsSchema.parse({ ...req.body, walletAddress });
 
-    const job = await editJob({ scheduleId, data: { ...scheduleParams, vincentAppVersion: 11 } });
-    res.status(201).json({ data: job, success: true });
+    const job = await editJob({
+      scheduleId,
+      data: { ...scheduleParams, vincentAppVersion: 11 },
+    });
+    res.status(201).json({ data: job.toJson(), success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
@@ -69,7 +75,7 @@ export const handleDisableScheduleRoute = async (
       return;
     }
 
-    res.json({ data: job, success: true });
+    res.json({ data: job.toJson(), success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
@@ -84,7 +90,7 @@ export const handleEnableScheduleRoute = async (
 
     const job = await enableJob({ scheduleId });
 
-    res.json({ data: job, success: true });
+    res.json({ data: job.toJson(), success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }

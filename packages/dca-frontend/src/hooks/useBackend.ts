@@ -6,22 +6,28 @@ import { useVincentWebAppClient } from '@/hooks/useVincentWebAppClient';
 
 type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
+export type DCA = {
+  lastRunAt: string;
+  nextRunAt: string;
+  lastFinishedAt: string;
+  failedAt: string;
+  _id: string;
+  disabled: boolean;
+  failReason: string;
+  data: {
+    name: string;
+    purchaseAmount: number;
+    purchaseIntervalHuman: string;
+    vincentAppVersion: number;
+    walletAddress: string;
+    updatedAt: string;
+  };
+};
+
 export interface CreateDCARequest {
   name: string;
   purchaseAmount: string;
   purchaseIntervalHuman: string;
-}
-
-export interface DCA extends CreateDCARequest {
-  _id: string;
-  active: boolean;
-  enabledAt: string;
-  updatedAt: string;
-  failedAt: string;
-  failedReason: string;
-  lastFinishedAt: string;
-  lastRunAt: string;
-  nextRunAt: string;
 }
 
 export const useBackend = () => {
