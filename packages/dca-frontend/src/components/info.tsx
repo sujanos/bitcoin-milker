@@ -21,7 +21,7 @@ export const Info: React.FC = () => {
         rel="noopener noreferrer"
         className="underline"
       >
-        LIT Protocol
+        Lit Protocol
       </a>
     </Box>
   );
