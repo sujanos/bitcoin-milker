@@ -1,6 +1,6 @@
 import { Response } from 'express';
 
-import { ScheduleParamsSchema } from './schema';
+import { ScheduleIdentitySchema, ScheduleParamsSchema } from './schema';
 import * as jobManager from '../agenda/jobs/dcaSwapJobManager';
 
 import type { ExpressAuthHelpers } from '@lit-protocol/vincent-sdk';
@@ -13,9 +13,7 @@ export const handleListSchedulesRoute = async (
   res: Response
 ) => {
   try {
-    const walletAddress = req.user.pkpAddress;
-
-    const schedules = await listJobsByWalletAddress({ walletAddress });
+    const schedules = await listJobsByWalletAddress({ walletAddress: req.user.pkpAddress });
 
     res.json({ data: schedules.map((sched) => sched.toJson()), success: true });
   } catch (err) {
@@ -28,9 +26,10 @@ export const handleCreateScheduleRoute = async (
   res: Response
 ) => {
   try {
-    const walletAddress = req.user.pkpAddress;
-
-    const scheduleParams = ScheduleParamsSchema.parse({ ...req.body, walletAddress });
+    const scheduleParams = ScheduleParamsSchema.parse({
+      ...req.body,
+      walletAddress: req.user.pkpAddress,
+    });
 
     const schedule = await createJob(
       { ...scheduleParams, vincentAppVersion: 11 },
@@ -47,10 +46,12 @@ export const handleEditScheduleRoute = async (
   res: Response
 ) => {
   try {
-    const walletAddress = req.user.pkpAddress;
-    const { scheduleId } = req.params as { scheduleId: string };
+    const { scheduleId } = ScheduleIdentitySchema.parse(req.params);
 
-    const scheduleParams = ScheduleParamsSchema.parse({ ...req.body, walletAddress });
+    const scheduleParams = ScheduleParamsSchema.parse({
+      ...req.body,
+      walletAddress: req.user.pkpAddress,
+    });
 
     const job = await editJob({
       scheduleId,
@@ -67,9 +68,9 @@ export const handleDisableScheduleRoute = async (
   res: Response
 ) => {
   try {
-    const { scheduleId } = req.params as { scheduleId: string };
+    const { scheduleId } = ScheduleIdentitySchema.parse(req.params);
 
-    const job = await disableJob({ scheduleId });
+    const job = await disableJob({ scheduleId, walletAddress: req.user.pkpAddress });
     if (!job) {
       res.status(404).json({ error: 'Job not found' });
       return;
@@ -86,9 +87,9 @@ export const handleEnableScheduleRoute = async (
   res: Response
 ) => {
   try {
-    const { scheduleId } = req.params as { scheduleId: string };
+    const { scheduleId } = ScheduleIdentitySchema.parse(req.params);
 
-    const job = await enableJob({ scheduleId });
+    const job = await enableJob({ scheduleId, walletAddress: req.user.pkpAddress });
 
     res.json({ data: job.toJson(), success: true });
   } catch (err) {
@@ -101,9 +102,9 @@ export const handleDeleteScheduleRoute = async (
   res: Response
 ) => {
   try {
-    const { scheduleId } = req.params as { scheduleId: string };
+    const { scheduleId } = ScheduleIdentitySchema.parse(req.params);
 
-    await cancelJob({ scheduleId });
+    await cancelJob({ scheduleId, walletAddress: req.user.pkpAddress });
 
     res.json({ success: true });
   } catch (err) {

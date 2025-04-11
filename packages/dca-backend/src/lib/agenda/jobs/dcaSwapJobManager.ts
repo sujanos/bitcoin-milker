@@ -7,6 +7,7 @@ import { getAgenda } from '../agendaClient';
 interface FindSpecificScheduledJobParams {
   mustExist?: boolean;
   scheduleId: string;
+  walletAddress: string;
 }
 
 const logger = consola.withTag('executeDCASwapJobManager');
@@ -21,22 +22,23 @@ export async function listJobsByWalletAddress({ walletAddress }: { walletAddress
   })) as executeDCASwapJobDef.JobType[];
 }
 
-export async function findJob(params: {
-  mustExist: true;
-  scheduleId: string;
-}): Promise<executeDCASwapJobDef.JobType>;
-export async function findJob(params: {
-  mustExist?: false;
-  scheduleId: string;
-}): Promise<executeDCASwapJobDef.JobType | undefined>;
+export async function findJob(
+  params: FindSpecificScheduledJobParams
+): Promise<executeDCASwapJobDef.JobType>;
+export async function findJob(
+  params: FindSpecificScheduledJobParams
+): Promise<executeDCASwapJobDef.JobType | undefined>;
 export async function findJob({
   mustExist,
   scheduleId,
+  walletAddress,
 }: FindSpecificScheduledJobParams): Promise<executeDCASwapJobDef.JobType | undefined> {
   const agendaClient = getAgenda();
 
   const jobs = (await agendaClient.jobs({
     _id: new Types.ObjectId(scheduleId),
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    'data.walletAddress': walletAddress,
   })) as executeDCASwapJobDef.JobType[];
 
   logger.log(`Found ${jobs.length} jobs with ID ${scheduleId}`);
@@ -54,7 +56,8 @@ export async function editJob({
   data: Omit<executeDCASwapJobDef.JobParams, 'updatedAt'>;
   scheduleId: string;
 }) {
-  const job = await findJob({ scheduleId, mustExist: true });
+  const { walletAddress } = data;
+  const job = await findJob({ scheduleId, walletAddress, mustExist: true });
   const { purchaseIntervalHuman } = data;
 
   if (purchaseIntervalHuman !== job.attrs.data.purchaseIntervalHuman) {
@@ -70,9 +73,12 @@ export async function editJob({
   return (await job.save()) as unknown as executeDCASwapJobDef.JobType;
 }
 
-export async function disableJob({ scheduleId }: FindSpecificScheduledJobParams) {
+export async function disableJob({
+  scheduleId,
+  walletAddress,
+}: Omit<FindSpecificScheduledJobParams, 'mustExist'>) {
   // Idempotent; if a job we're trying to disable doesn't exist, it is disabled.
-  const job = await findJob({ scheduleId, mustExist: false });
+  const job = await findJob({ scheduleId, walletAddress, mustExist: false });
 
   if (!job) return null;
 
@@ -84,8 +90,9 @@ export async function disableJob({ scheduleId }: FindSpecificScheduledJobParams)
 
 export async function enableJob({
   scheduleId,
-}: Pick<FindSpecificScheduledJobParams, 'scheduleId'>) {
-  const job = await findJob({ scheduleId, mustExist: true });
+  walletAddress,
+}: Omit<FindSpecificScheduledJobParams, 'mustExist'>) {
+  const job = await findJob({ scheduleId, walletAddress, mustExist: true });
 
   logger.log(`Enabling DCA job ${scheduleId}`);
   job.attrs.data.updatedAt = new Date();
@@ -95,10 +102,15 @@ export async function enableJob({
 
 export async function cancelJob({
   scheduleId,
-}: Pick<FindSpecificScheduledJobParams, 'scheduleId'>) {
+  walletAddress,
+}: Omit<FindSpecificScheduledJobParams, 'mustExist'>) {
   const agendaClient = getAgenda();
   logger.log(`Cancelling (deleting) DCA job ${scheduleId}`);
-  return agendaClient.cancel({ _id: new Types.ObjectId(scheduleId) });
+  return agendaClient.cancel({
+    _id: new Types.ObjectId(scheduleId),
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    'data.walletAddress': walletAddress,
+  });
 }
 
 export async function createJob(

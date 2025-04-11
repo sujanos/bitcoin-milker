@@ -281,7 +281,7 @@ export async function executeDCASwap(job: JobType): Promise<void> {
       coinAddress: topCoin.coinAddress,
       name: topCoin.name,
       purchasePrice: topCoin.price,
-      schedule: _id,
+      scheduleId: _id,
       success: true,
       symbol: topCoin.symbol,
       txHash: swapHash,
