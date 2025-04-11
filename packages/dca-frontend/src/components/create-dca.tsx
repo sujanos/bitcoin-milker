@@ -66,7 +66,7 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
             <strong>How It Works (Powered by Vincent):</strong>
             <br />
             Typically, building automated crypto spending agents involves trusting agent developers
-            or <strong>wallet SaaS companies for</strong> key management. Vincent enables a more
+            or wallet SaaS companies for <strong>key management</strong>. Vincent enables a more
             secure and simpler process.
             <br />
             <br />
@@ -79,7 +79,7 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
               rel="noopener noreferrer"
               className="underline"
             >
-              LIT Protocol
+              Lit Protocol
             </a>
             , ensuring every action stays within your guardrails. With Vincent, you achieve powerful
             automation combined with secure, permissioned execution.
