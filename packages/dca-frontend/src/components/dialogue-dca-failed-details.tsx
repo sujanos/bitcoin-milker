@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Info } from 'lucide-react';
+import { CircleAlert } from 'lucide-react';
 
 import { Box } from '@/components/ui/box';
 import { Button } from '@/components/ui/button';
@@ -37,7 +37,7 @@ export const DialogueDcaFailedDetails: React.FC<DCADetailsDialogProps> = ({ dca 
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
-          <Info />
+          <CircleAlert color="#dc0909" />
         </Button>
       </DialogTrigger>
       <DialogContent className={cn(failedAfterLastRun ? 'min-w-2/3' : '', 'overflow-hidden')}>
@@ -58,7 +58,7 @@ export const DialogueDcaFailedDetails: React.FC<DCADetailsDialogProps> = ({ dca 
                 </span>
               </div>
 
-              {dca.failedReason && (
+              {dca.failReason && (
                 <>
                   <Separator />
 
@@ -68,7 +68,7 @@ export const DialogueDcaFailedDetails: React.FC<DCADetailsDialogProps> = ({ dca 
                       className="text-red-500 text-sm border border-gray-200 rounded p-3 max-h-[120px] overflow-y-auto break-words whitespace-pre-wrap"
                       style={{ wordBreak: 'break-word', maxHeight: '120px', overflowY: 'scroll' }}
                       dangerouslySetInnerHTML={{
-                        __html: dca.failedReason.replace(/\\n/g, '<br />'),
+                        __html: dca.failReason.replace(/\\n/g, '<br />'),
                       }}
                     />
                   </div>

@@ -42,36 +42,41 @@ function renderDCASchedulesTable(
 
       <TableBody>
         {activeDCAs.map((dca) => {
-          const uniqueKey = dca._id;
+          const {
+            disabled,
+            lastFinishedAt,
+            failedAt,
+            _id: uniqueKey,
+            data: { purchaseAmount, purchaseIntervalHuman, updatedAt },
+          } = dca;
 
           const failedAfterLastRun =
-            dca.failedAt && dca.lastFinishedAt
-              ? new Date(dca.lastFinishedAt) <= new Date(dca.failedAt)
-              : false;
+            failedAt && lastFinishedAt ? new Date(lastFinishedAt) <= new Date(failedAt) : false;
 
+          const active = !disabled;
           return (
             <TableRow key={uniqueKey}>
-              <TableCell>${dca.purchaseAmount}</TableCell>
+              <TableCell>${purchaseAmount}</TableCell>
               <TableCell>
-                {FREQUENCIES.find((freq) => freq.value === dca.purchaseIntervalHuman)?.label ||
-                  dca.purchaseIntervalHuman}
+                {FREQUENCIES.find((freq) => freq.value === purchaseIntervalHuman)?.label ||
+                  purchaseIntervalHuman}
               </TableCell>
-              <TableCell>{new Date(dca.updatedAt).toLocaleString()}</TableCell>
+              <TableCell>{new Date(updatedAt).toLocaleString()}</TableCell>
               <TableCell>
                 <span
                   className={cn(
-                    dca.active && !failedAfterLastRun && 'text-green-500',
-                    dca.active && failedAfterLastRun && 'text-red-500'
+                    active && !failedAfterLastRun && 'text-green-500',
+                    active && failedAfterLastRun && 'text-red-500'
                   )}
                 >
-                  {!dca.active ? 'Inactive' : failedAfterLastRun ? 'Failed' : 'Active'}
+                  {!active ? 'Inactive' : failedAfterLastRun ? 'Failed' : 'Active'}
                   {failedAfterLastRun && <DialogueDcaFailedDetails dca={dca} />}
                 </span>
               </TableCell>
               <TableCell>
                 <Box className="flex flex-row items-center justify-end gap-2 p-1">
                   <DialogueEditDCA dca={dca} onUpdate={handleUpdatedDCA} />
-                  {dca.active ? (
+                  {active ? (
                     <Button variant="destructive" onClick={() => handleDisableDCA(dca._id)}>
                       <Pause />
                     </Button>
@@ -109,6 +114,7 @@ function renderContent(
   handleEnableDCA: (dcaId: string) => Promise<void>,
   handleDeleteDCA: (dcaId: string) => Promise<void>
 ) {
+  console.log('activeDCAs', activeDCAs);
   if (!activeDCAs.length && isLoading) {
     return renderSpinner();
   } else if (activeDCAs.length) {
@@ -152,7 +158,7 @@ export const ActiveDcas: React.FC = () => {
 
         const updatedDCAs = [...activeDCAs];
         const index = updatedDCAs.findIndex((dca) => dca._id === dcaId);
-        updatedDCAs[index].active = false;
+        updatedDCAs[index].disabled = true;
         setActiveDCAs(updatedDCAs);
       } catch (error) {
         console.error('Error disabling DCA:', error);
@@ -168,7 +174,7 @@ export const ActiveDcas: React.FC = () => {
 
         const updatedDCAs = [...activeDCAs];
         const index = updatedDCAs.findIndex((dca) => dca._id === dcaId);
-        updatedDCAs[index].active = true;
+        updatedDCAs[index].disabled = false;
         setActiveDCAs(updatedDCAs);
       } catch (error) {
         console.error('Error disabling DCA:', error);

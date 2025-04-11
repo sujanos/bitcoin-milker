@@ -1,6 +1,6 @@
 import { Response } from 'express';
 
-import { PurchasedCoin } from '../../mongo/models/PurchasedCoin';
+import { PurchasedCoin } from '../mongo/models/PurchasedCoin';
 
 import type { ExpressAuthHelpers } from '@lit-protocol/vincent-sdk';
 
