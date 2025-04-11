@@ -16,7 +16,9 @@ export const Home: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.CreateDCA);
 
   return (
-    <div className={'flex flex-col items-center justify-center h-screen w-screen bg-gray-100'}>
+    <div
+      className={'flex flex-col items-center justify-center min-h-screen min-w-screen bg-gray-100'}
+    >
       <Tabs
         data-testId="dca-tabs"
         value={activeTab}
