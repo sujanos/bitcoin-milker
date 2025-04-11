@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { CreateDCA } from '@/components/create-dca';
 import { ActiveDcas } from '@/components/active-dcas';
+import { Info } from '@/components/info';
 import { Wallet } from '@/components/wallet';
 
 enum Tab {
@@ -20,7 +21,7 @@ export const Home: React.FC = () => {
         data-testId="dca-tabs"
         value={activeTab}
         onValueChange={(value) => setActiveTab(value as Tab)}
-        className="bg-white p-6 shadow-sm min-w-1/2 min-h-3/4"
+        className="bg-white p-6 shadow-sm w-full xl:max-w-4xl h-full"
       >
         <TabsList className="mb-4 flex space-x-2 rounded-md bg-gray-200 p-2 w-full">
           <TabsTrigger value={Tab.CreateDCA}>Create DCA</TabsTrigger>
@@ -38,6 +39,8 @@ export const Home: React.FC = () => {
           <Wallet />
         </TabsContent>
       </Tabs>
+
+      <Info />
     </div>
   );
 };
