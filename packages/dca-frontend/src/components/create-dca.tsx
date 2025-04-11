@@ -54,7 +54,7 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
   };
 
   return (
-    <Card className="flex flex-column justify-between bg-white p-6 shadow-sm">
+    <Card className="flex flex-col justify-between bg-white p-6 shadow-sm">
       <form onSubmit={handleCreateDCA}>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Start DCA into Top Base Memecoins</CardTitle>
