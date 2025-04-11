@@ -31,7 +31,7 @@ export const useBackend = () => {
   const getJwt = useCallback(() => {
     // Redirect to Vincent Auth consent page with appId and version
     vincentWebAppClient.redirectToConsentPage({
-      // consentPageUrl: `localhost:8080`
+      // consentPageUrl: `http://localhost:8080`,
       redirectUri: REDIRECT_URI,
     });
   }, [vincentWebAppClient]);

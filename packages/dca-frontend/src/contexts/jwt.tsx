@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useState, useEffect, ReactNode } from 'react';
+import { IRelayPKP } from '@lit-protocol/types';
 import { jwt } from '@lit-protocol/vincent-sdk';
 
 const { decode, isExpired } = jwt;
@@ -10,10 +11,7 @@ const APP_JWT_KEY = `${APP_ID}-jwt`;
 
 export interface AuthInfo {
   jwt: string;
-  pkp: {
-    address: string;
-    publicKey: string;
-  };
+  pkp: IRelayPKP;
 }
 
 interface JwtContextType {
@@ -56,10 +54,7 @@ export const JwtProvider: React.FC<JwtProviderProps> = ({ children }) => {
           vincentWebAppClient.removeLoginJWTFromURI();
           setAuthInfo({
             jwt: jwtStr,
-            pkp: {
-              address: decodedJWT.payload.pkpAddress,
-              publicKey: decodedJWT.payload.pkpPublicKey,
-            },
+            pkp: decodedJWT.payload.pkp,
           });
           return;
         } else {
@@ -82,10 +77,7 @@ export const JwtProvider: React.FC<JwtProviderProps> = ({ children }) => {
 
       setAuthInfo({
         jwt: existingJwtStr,
-        pkp: {
-          address: decodedJWT.payload.pkpAddress,
-          publicKey: decodedJWT.payload.pkpPublicKey,
-        },
+        pkp: decodedJWT.payload.pkp,
       });
 
       return;

@@ -28,15 +28,15 @@ export const Wallet: React.FC = () => {
 
   // Function to fetch PKP wethBalanceWei directly using ethers.js
   const fetchPkpBalance = useCallback(async () => {
-    if (!authInfo?.pkp.address) return;
+    if (!authInfo?.pkp.ethAddress) return;
 
     try {
       setIsLoadingBalance(true);
       setError(null);
 
       const [ethBalanceWei, wethBalanceWei] = await Promise.all([
-        provider.getBalance(authInfo?.pkp.address),
-        wethContract.balanceOf(authInfo?.pkp.address),
+        provider.getBalance(authInfo?.pkp.ethAddress),
+        wethContract.balanceOf(authInfo?.pkp.ethAddress),
       ]);
 
       // Both have 18 decimal places
@@ -68,12 +68,12 @@ export const Wallet: React.FC = () => {
           <BoxTitle>Wallet Address:</BoxTitle>
 
           <a
-            href={`${chain.blockExplorerUrls[0]}/address/${authInfo?.pkp.address}`}
+            href={`${chain.blockExplorerUrls[0]}/address/${authInfo?.pkp.ethAddress}`}
             target="_blank"
             rel="noopener noreferrer"
             className="underline"
           >
-            {authInfo?.pkp.address ?? 'Loading...'}
+            {authInfo?.pkp.ethAddress ?? 'Loading...'}
           </a>
         </Box>
 
