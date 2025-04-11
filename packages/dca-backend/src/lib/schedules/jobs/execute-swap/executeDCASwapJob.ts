@@ -44,7 +44,7 @@ async function addApproval({
     baseProvider,
     BASE_CHAIN_ID,
     WETH_ADDRESS!,
-    (wethAmount * 5).toString(),
+    (wethAmount * 5).toFixed(18).toString(),
     wEthDecimals.toString(),
     walletAddress
   );
