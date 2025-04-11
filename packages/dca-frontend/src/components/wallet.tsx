@@ -5,18 +5,16 @@ import { LogOut, RefreshCcw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Box, BoxDescription, BoxTitle } from '@/components/ui/box';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { JwtContext } from '@/contexts/jwt';
 import { useChain } from '@/hooks/useChain';
+
+const formatAddress = (address: string | undefined) => {
+  if (!address) return 'Loading...';
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+};
 
 export const Wallet: React.FC = () => {
   const { chain, provider, wethContract } = useChain();
@@ -71,9 +69,10 @@ export const Wallet: React.FC = () => {
             href={`${chain.blockExplorerUrls[0]}/address/${authInfo?.pkp.address}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="underline"
+            className="underline hover:opacity-80"
+            title={authInfo?.pkp.address}
           >
-            {authInfo?.pkp.address ?? 'Loading...'}
+            {formatAddress(authInfo?.pkp.address)}
           </a>
         </Box>
 
@@ -149,20 +148,6 @@ export const Wallet: React.FC = () => {
           <LogOut /> Log Out
         </Button>
       </CardContent>
-
-      <CardFooter className="flex flex-col items-center">
-        <CardDescription className="mt-2 text-sm text-gray-500">
-          Powered by{' '}
-          <a
-            href="https://litprotocol.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline"
-          >
-            LIT Protocol
-          </a>
-        </CardDescription>
-      </CardFooter>
     </Card>
   );
 };

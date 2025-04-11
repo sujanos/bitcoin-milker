@@ -54,10 +54,10 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
   };
 
   return (
-    <Card className="h-full flex flex-column justify-between bg-white p-6 shadow-sm">
+    <Card className="flex flex-col justify-between bg-white p-6 shadow-sm">
       <form onSubmit={handleCreateDCA}>
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Start DCA with Top Base Memecoin</CardTitle>
+          <CardTitle className="text-2xl font-bold">Start DCA into Top Base Memecoins</CardTitle>
           <CardDescription className="mt-2 text-gray-600">
             This system will automatically purchase the top memecoin using WETH on Base at regular
             intervals based on your schedule.
