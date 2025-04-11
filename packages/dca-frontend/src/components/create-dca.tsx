@@ -57,14 +57,36 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
     <Card className="flex flex-col justify-between bg-white p-6 shadow-sm">
       <form onSubmit={handleCreateDCA}>
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Start DCA into Top Base Memecoins</CardTitle>
+          <CardTitle className="text-2xl font-bold">Dynamic & Secure DCA on Base</CardTitle>
           <CardDescription className="mt-2 text-gray-600">
-            This system will automatically purchase the top memecoin using WETH on Base at regular
-            intervals based on your schedule.
+            This demo agent automatically identifies and purchases the top-performing Base memecoin
+            on your predefined schedule.
             <br />
             <br />
-            Fund your wallet with Base WETH and ETH to start. Without it, your transactions will not
-            execute or even fail.
+            <strong>How It Works (Powered by Vincent):</strong>
+            <br />
+            Typically, building automated crypto spending agents involves trusting agent developers
+            or <strong>wallet SaaS companies for</strong> key management. Vincent enables a more
+            secure and simpler process.
+            <br />
+            <br />
+            The agent operates using permissions securely delegated by you, following strict rules
+            you establish during setup—such as daily spending limit. These onchain rules are
+            cryptographically enforced by{' '}
+            <a
+              href="https://litprotocol.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              LIT Protocol
+            </a>
+            , ensuring every action stays within your guardrails. With Vincent, you achieve powerful
+            automation combined with secure, permissioned execution.
+            <br />
+            <br />
+            <strong>Quick Tip:</strong> Ensure your wallet holds sufficient Base WETH + ETH for the
+            demo to function smoothly.
           </CardDescription>
         </CardHeader>
 
