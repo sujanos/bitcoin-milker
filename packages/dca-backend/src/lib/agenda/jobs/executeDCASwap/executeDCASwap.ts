@@ -1,6 +1,6 @@
+import { Job } from '@whisthub/agenda';
 import consola from 'consola';
 import { ethers } from 'ethers';
-import { Types } from 'mongoose';
 
 import { Coin, getTopBaseMemeCoin } from './baseMemeCoinLoader';
 import { getEthereumPriceUsd } from './ethPriceLoader';
@@ -14,12 +14,15 @@ import { getERC20Contract, getExistingUniswapAllowance } from './utils/get-erc20
 import { getErc20ApprovalToolClient, getUniswapToolClient } from './vincentTools';
 import { env } from '../../../env';
 import { PurchasedCoin } from '../../../mongo/models/PurchasedCoin';
-import { Schedule } from '../../../mongo/models/Schedule';
 
-export interface ExecuteDCASwapJobParams {
-  scheduleId: Types.ObjectId;
+export type JobType = Job<JobParams>;
+export type JobParams = {
+  name: string;
+  purchaseAmount: number;
+  purchaseIntervalHuman: string;
   vincentAppVersion: number;
-}
+  walletAddress: string;
+};
 
 const { BASE_RPC_URL } = env;
 
@@ -172,16 +175,17 @@ async function handleSwapExecution({
   return swapResult.swapTxHash;
 }
 
-async function executeDCASwapJob({ scheduleId }: ExecuteDCASwapJobParams): Promise<void> {
+export async function executeDCASwap(job: JobType): Promise<void> {
   try {
+    const {
+      _id,
+      data: { purchaseAmount, walletAddress },
+    } = job.attrs;
+
     // Fetch top coin first to get the target token
     consola.debug('Fetching top coin...');
     const topCoin = await getTopBaseMemeCoin();
     consola.debug('Got top coin:', topCoin);
-
-    const schedule = await Schedule.findById(scheduleId).orFail().lean();
-
-    const { purchaseAmount, walletAddress } = schedule;
 
     // FIXME: This should be type-safe
     const { WETH_ADDRESS } = getAddressesByChainId(BASE_CHAIN_ID);
@@ -272,11 +276,11 @@ async function executeDCASwapJob({ scheduleId }: ExecuteDCASwapJobParams): Promi
     // Create a purchase record with all required fields
     const purchase = new PurchasedCoin({
       purchaseAmount,
-      schedule,
       walletAddress,
       coinAddress: topCoin.coinAddress,
       name: topCoin.name,
       purchasePrice: topCoin.price,
+      schedule: _id,
       success: true,
       symbol: topCoin.symbol,
       txHash: swapHash,
@@ -295,6 +299,3 @@ async function executeDCASwapJob({ scheduleId }: ExecuteDCASwapJobParams): Promi
     throw e;
   }
 }
-
-export const jobName = 'execute-swap';
-export const processJob = executeDCASwapJob;

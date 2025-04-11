@@ -12,8 +12,8 @@ import {
   handleDeleteScheduleRoute,
   handleEditScheduleRoute,
 } from './schedules';
-import { env } from '../../env';
-import { serviceLogger } from '../../logger';
+import { env } from '../env';
+import { serviceLogger } from '../logger';
 
 const { ALLOWED_AUDIENCE, CORS_ALLOWED_DOMAIN, IS_DEVELOPMENT } = env;
 

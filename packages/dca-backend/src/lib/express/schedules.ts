@@ -1,16 +1,12 @@
 import { Response } from 'express';
-import { Types } from 'mongoose';
 
-import { disableJob, enableJob } from '../../scheduleManager/jobs';
-import {
-  createSchedule,
-  deleteSchedule,
-  editSchedule,
-  listSchedules,
-} from '../../scheduleManager/schedules';
-import { CreateScheduleParams, EditScheduleParams } from '../../types';
+import { ScheduleParamsSchema } from './schema';
+import * as jobManager from '../agenda/jobs/dcaSwapJobManager';
 
 import type { ExpressAuthHelpers } from '@lit-protocol/vincent-sdk';
+
+const { cancelJob, createJob, disableJob, editJob, enableJob, listJobsByWalletAddress } =
+  jobManager;
 
 export const handleListSchedulesRoute = async (
   req: ExpressAuthHelpers['AuthenticatedRequest'],
@@ -19,12 +15,7 @@ export const handleListSchedulesRoute = async (
   try {
     const walletAddress = req.user.pkpAddress;
 
-    if (!walletAddress) {
-      res.status(400).json({ error: 'No wallet address provided' });
-      return;
-    }
-
-    const schedules = await listSchedules({ walletAddress });
+    const schedules = await listJobsByWalletAddress({ walletAddress });
 
     res.json({ data: schedules, success: true });
   } catch (err) {
@@ -39,14 +30,9 @@ export const handleCreateScheduleRoute = async (
   try {
     const walletAddress = req.user.pkpAddress;
 
-    if (!walletAddress) {
-      res.status(400).json({ error: 'No wallet address provided' });
-      return;
-    }
+    const scheduleParams = ScheduleParamsSchema.parse({ ...req.body, walletAddress });
 
-    const scheduleData = { ...req.body, walletAddress } as CreateScheduleParams;
-
-    const { schedule } = await createSchedule(scheduleData);
+    const schedule = await createJob({ ...scheduleParams, vincentAppVersion: 11 });
     res.status(201).json({ data: schedule, success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
@@ -61,15 +47,10 @@ export const handleEditScheduleRoute = async (
     const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
-    if (!walletAddress) {
-      res.status(400).json({ error: 'No wallet address provided' });
-      return;
-    }
+    const scheduleParams = ScheduleParamsSchema.parse({ ...req.body, walletAddress });
 
-    const scheduleData = { ...req.body, scheduleId, walletAddress } as EditScheduleParams;
-
-    const { schedule } = await editSchedule(scheduleData);
-    res.status(201).json({ data: schedule, success: true });
+    const job = await editJob({ scheduleId, data: { ...scheduleParams, vincentAppVersion: 11 } });
+    res.status(201).json({ data: job, success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
@@ -80,21 +61,15 @@ export const handleDisableScheduleRoute = async (
   res: Response
 ) => {
   try {
-    const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
-    if (!walletAddress) {
-      res.status(400).json({ error: 'No wallet address provided' });
-      return;
-    }
-
-    const job = await disableJob({ scheduleId: new Types.ObjectId(scheduleId) });
+    const job = await disableJob({ scheduleId });
     if (!job) {
       res.status(404).json({ error: 'Job not found' });
       return;
     }
 
-    res.json({ data: job.toJson(), success: true });
+    res.json({ data: job, success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
@@ -105,17 +80,11 @@ export const handleEnableScheduleRoute = async (
   res: Response
 ) => {
   try {
-    const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
-    if (!walletAddress) {
-      res.status(400).json({ error: 'No wallet address provided' });
-      return;
-    }
+    const job = await enableJob({ scheduleId });
 
-    const job = await enableJob({ scheduleId: new Types.ObjectId(scheduleId) });
-
-    res.json({ data: job.toJson(), success: true });
+    res.json({ data: job, success: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
@@ -126,15 +95,9 @@ export const handleDeleteScheduleRoute = async (
   res: Response
 ) => {
   try {
-    const walletAddress = req.user.pkpAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
-    if (!walletAddress) {
-      res.status(400).json({ error: 'No wallet address provided' });
-      return;
-    }
-
-    await deleteSchedule({ scheduleId: new Types.ObjectId(scheduleId) });
+    await cancelJob({ scheduleId });
 
     res.json({ success: true });
   } catch (err) {

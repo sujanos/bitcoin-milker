@@ -28,9 +28,8 @@ const purchasedCoinSchemaDefinition = {
       },
     },
   },
-  schedule: {
+  scheduleId: {
     index: true,
-    ref: 'Schedule',
     required: true,
     type: Schema.Types.ObjectId,
   },
@@ -55,7 +54,6 @@ const purchasedCoinSchemaDefinition = {
 const PurchasedCoinSchema = new Schema(purchasedCoinSchemaDefinition, { timestamps: true });
 
 // Create compound indices for common query patterns
-PurchasedCoinSchema.index({ purchasedAt: -1, walletAddress: 1 });
-PurchasedCoinSchema.index({ createdAt: 1, schedule: 1 });
+PurchasedCoinSchema.index({ createdAt: 1, scheduleId: 1 });
 
 export const PurchasedCoin = model('PurchasedCoin', PurchasedCoinSchema);
