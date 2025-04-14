@@ -17,7 +17,7 @@ export const handleListSchedulesRoute = async (
   res: Response
 ) => {
   try {
-    const walletAddress = req.user.pkpAddress;
+    const walletAddress = req.user.pkp.ethAddress;
 
     if (!walletAddress) {
       res.status(400).json({ error: 'No wallet address provided' });
@@ -37,7 +37,7 @@ export const handleCreateScheduleRoute = async (
   res: Response
 ) => {
   try {
-    const walletAddress = req.user.pkpAddress;
+    const walletAddress = req.user.pkp.ethAddress;
 
     if (!walletAddress) {
       res.status(400).json({ error: 'No wallet address provided' });
@@ -58,7 +58,7 @@ export const handleEditScheduleRoute = async (
   res: Response
 ) => {
   try {
-    const walletAddress = req.user.pkpAddress;
+    const walletAddress = req.user.pkp.ethAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
     if (!walletAddress) {
@@ -80,7 +80,7 @@ export const handleDisableScheduleRoute = async (
   res: Response
 ) => {
   try {
-    const walletAddress = req.user.pkpAddress;
+    const walletAddress = req.user.pkp.ethAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
     if (!walletAddress) {
@@ -105,7 +105,7 @@ export const handleEnableScheduleRoute = async (
   res: Response
 ) => {
   try {
-    const walletAddress = req.user.pkpAddress;
+    const walletAddress = req.user.pkp.ethAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
     if (!walletAddress) {
@@ -126,7 +126,7 @@ export const handleDeleteScheduleRoute = async (
   res: Response
 ) => {
   try {
-    const walletAddress = req.user.pkpAddress;
+    const walletAddress = req.user.pkp.ethAddress;
     const { scheduleId } = req.params as { scheduleId: string };
 
     if (!walletAddress) {
