@@ -23,10 +23,11 @@ export interface EditDialogProps {
 }
 
 export const DialogueEditDCA: React.FC<EditDialogProps> = ({ dca, onUpdate }) => {
+  const { data } = dca;
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [purchaseAmount, setPurchaseAmount] = useState<string>(dca.purchaseAmount);
-  const [frequency, setFrequency] = useState<string>(dca.purchaseIntervalHuman);
+  const [purchaseAmount, setPurchaseAmount] = useState<string>(String(data.purchaseAmount));
+  const [frequency, setFrequency] = useState<string>(data.purchaseIntervalHuman);
 
   const { editDCA } = useBackend();
 
@@ -44,7 +45,7 @@ export const DialogueEditDCA: React.FC<EditDialogProps> = ({ dca, onUpdate }) =>
       try {
         setLoading(true);
         const updatedDCA = await editDCA(dca._id, {
-          name: dca.name,
+          name: data.name,
           purchaseAmount,
           purchaseIntervalHuman: frequency,
         });

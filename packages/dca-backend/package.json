@@ -12,8 +12,10 @@
     "lint": "pnpm eslint ./src",
     "build": "pnpm unbuild",
     "esbuild": "node esbuild.mjs",
-    "dev": "pnpm dotenvx run -- pnpm bun --watch ./src/bin/server.ts",
-    "start": "node ./dist/bin/server.mjs",
+    "dev": "pnpm dotenvx run -- pnpm bun --watch src/bin/serverWorker.ts",
+    "start": "node ./dist/bin/serverWorker.mjs",
+    "startWorker": "node ./dist/bin/jobWorker.mjs",
+    "startApiServer": "node ./dist/bin/apiServer.mjs",
     "clean": "pnpm exec rm -Rf node_modules dist",
     "mintRli": "pnpm dotenvx run -- pnpm bun ./src/bin/mintRLINft.ts"
   },
@@ -25,7 +27,11 @@
   "files": [
     "dist"
   ],
-  "bin": "./dist/bin/server.mjs",
+  "bin": {
+    "serverWorker": "./dist/bin/serverWorker.mjs",
+    "jobWorker": "./dist/bin/jobWorker.mjs",
+    "apiServer": "./dist/bin/apiServer.mjs"
+  },
   "private": true,
   "dependencies": {
     "@dotenvx/dotenvx": "^1.39.0",
