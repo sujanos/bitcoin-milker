@@ -3,7 +3,7 @@ import Cache from 'node-cache';
 
 import { wrapNodeCacheForDataloader } from './dataLoaderCache';
 
-const cache = new Cache({ checkperiod: 0, stdTTL: 5, useClones: false });
+const cache = new Cache({ checkperiod: 0, stdTTL: 60, useClones: false });
 
 export function assertEthereumPriceData(
   data: unknown

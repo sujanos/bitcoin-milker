@@ -5,7 +5,7 @@ import Cache from 'node-cache';
 import { wrapNodeCacheForDataloader } from './dataLoaderCache';
 import { env } from '../../../env';
 
-const cache = new Cache({ checkperiod: 0, stdTTL: 5, useClones: false });
+const cache = new Cache({ checkperiod: 0, stdTTL: 60 * 10, useClones: false }); // 10 minute cache
 
 const { COINRANKING_API_KEY } = env;
 
