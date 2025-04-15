@@ -183,6 +183,12 @@ export async function executeDCASwap(job: JobType): Promise<void> {
       data: { purchaseAmount, walletAddress },
     } = job.attrs;
 
+    consola.log('Starting DCA swap job...', {
+      _id,
+      purchaseAmount,
+      walletAddress,
+    });
+
     // Fetch top coin first to get the target token
     consola.debug('Fetching top coin...');
     const topCoin = await getTopBaseMemeCoin();
