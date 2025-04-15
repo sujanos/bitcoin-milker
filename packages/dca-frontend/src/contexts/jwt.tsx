@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useState, useEffect, ReactNode } fro
 import { IRelayPKP } from '@lit-protocol/types';
 import { jwt } from '@lit-protocol/vincent-sdk';
 
-const { decode, isExpired } = jwt;
+const { verify } = jwt;
 
 import { APP_ID } from '@/config';
 import { useVincentWebAppClient } from '@/hooks/useVincentWebAppClient';
@@ -69,18 +69,17 @@ export const JwtProvider: React.FC<JwtProviderProps> = ({ children }) => {
     }
 
     if (existingJwtStr) {
-      const decodedJWT = decode(existingJwtStr);
-      const expiredToken = isExpired(decodedJWT);
-      if (expiredToken) {
+      try {
+        const decodedJWT = verify(existingJwtStr, window.location.origin);
+
+        setAuthInfo({
+          jwt: existingJwtStr,
+          pkp: decodedJWT.payload.pkp,
+        });
+      } catch (error: unknown) {
+        console.error(`Error verifying existing JWT. Need to relogin: ${(error as Error).message}`);
         logOut();
       }
-
-      setAuthInfo({
-        jwt: existingJwtStr,
-        pkp: decodedJWT.payload.pkp,
-      });
-
-      return;
     }
   }, [logOut, vincentWebAppClient]);
 
