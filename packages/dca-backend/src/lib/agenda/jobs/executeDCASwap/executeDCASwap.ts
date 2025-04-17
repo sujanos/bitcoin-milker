@@ -257,19 +257,16 @@ export async function executeDCASwap(job: JobType): Promise<void> {
 
     if (needsApproval) {
       approvalGasCost = await addApproval({
-        WETH_ADDRESS: WETH_ADDRESS!,
-        // eslint-disable-next-line sort-keys-plus/sort-keys
         baseProvider,
         nativeEthBalance,
         walletAddress,
         wethAmount,
         wEthDecimals,
+        WETH_ADDRESS: WETH_ADDRESS!,
       });
     }
 
     const swapHash = await handleSwapExecution({
-      WETH_ADDRESS: WETH_ADDRESS!,
-      // eslint-disable-next-line sort-keys-plus/sort-keys
       approvalGasCost,
       baseProvider,
       nativeEthBalance,
@@ -279,6 +276,7 @@ export async function executeDCASwap(job: JobType): Promise<void> {
       wethAmount,
       wEthBalance,
       wEthDecimals,
+      WETH_ADDRESS: WETH_ADDRESS!,
     });
     // Create a purchase record with all required fields
     const purchase = new PurchasedCoin({

@@ -17,7 +17,6 @@ export async function listJobsByWalletAddress({ walletAddress }: { walletAddress
   logger.log('listing jobs', { walletAddress });
 
   return (await agendaClient.jobs({
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     'data.walletAddress': walletAddress,
   })) as executeDCASwapJobDef.JobType[];
 }
@@ -37,7 +36,6 @@ export async function findJob({
 
   const jobs = (await agendaClient.jobs({
     _id: new Types.ObjectId(scheduleId),
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     'data.walletAddress': walletAddress,
   })) as executeDCASwapJobDef.JobType[];
 
@@ -108,7 +106,6 @@ export async function cancelJob({
   logger.log(`Cancelling (deleting) DCA job ${scheduleId}`);
   return agendaClient.cancel({
     _id: new Types.ObjectId(scheduleId),
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     'data.walletAddress': walletAddress,
   });
 }
@@ -129,7 +126,6 @@ export async function createJob(
   });
 
   // Currently we only allow a single DCA per walletAddress
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   job.unique({ 'data.walletAddress': data.walletAddress });
 
   // Schedule the job based on provided options
