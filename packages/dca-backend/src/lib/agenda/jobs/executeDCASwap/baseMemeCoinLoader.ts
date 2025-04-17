@@ -45,7 +45,6 @@ async function batchLoadFn(
   logger.info(`Fetching top coins from CoinRanking API: ${url.toString()}`);
   const response = await fetch(url, {
     headers: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       'x-access-token': COINRANKING_API_KEY,
     },
   });

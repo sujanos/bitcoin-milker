@@ -6,7 +6,6 @@ export type AddressSet = {
   WETH_ADDRESS?: string;
 };
 
-/* eslint-disable @typescript-eslint/naming-convention */
 const addressMap: Record<string, AddressSet> = {
   '1': {
     /**
