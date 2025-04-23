@@ -36,6 +36,10 @@ export const Presentation: React.FC = () => {
         <p className="mt-4 text-gray-700">
           To get started, please Auth with Vincent to manage your DCA schedules.
         </p>
+        <p className="mt-4 text-gray-700">
+          This app is provided to demonstrate the capabilities of the Vincent platform, and not
+          intended for production use.
+        </p>
       </CardContent>
 
       <CardFooter className="flex flex-col items-center">

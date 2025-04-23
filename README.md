@@ -37,7 +37,7 @@ pnpm start
 ## 📦 Packages
 
 | Package                                         | Purpose                                                                          |
-|-------------------------------------------------|----------------------------------------------------------------------------------|
+| ----------------------------------------------- | -------------------------------------------------------------------------------- |
 | [dca-frontend](packages/dca-frontend/README.md) | Frontend for end-users to define DCA tasks to be run on a schedule               |
 | [dca-backend](packages/dca-backend/README.md)   | Backend REST API and worker instance using NodeJS; deployed to Heroku currently. |
 
@@ -51,3 +51,8 @@ and a node .npmrc configuration file for pnpm is included, along with a .nvmrc f
 - Enable [Corepack](https://github.com/nodejs/corepack) using `corepack enable`
 - Install dependencies by executing `pnpm install` in the root of the repo
 - Build all packages by executing `pnpm build` in the root of the repo
+
+## Disclaimers
+
+- The software is provided “as is”, without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. We make no guarantees about its stability or suitability for production use. It is provided for demo and educational purposes.
+- It's your responsibility to comply with all applicable laws and regulations for your jurisdiction with respect to the use of this software.
