@@ -109,8 +109,8 @@ importers:
         specifier: ^7.0.9
         version: 7.0.9
       '@lit-protocol/vincent-sdk':
-        specifier: 0.0.5
-        version: 0.0.5(typescript@5.8.2)
+        specifier: 0.0.6
+        version: 0.0.6(typescript@5.8.2)
       '@noble/secp256k1':
         specifier: ^2.2.3
         version: 2.2.3
@@ -191,8 +191,8 @@ importers:
         specifier: ^7.0.9
         version: 7.0.9
       '@lit-protocol/vincent-sdk':
-        specifier: 0.0.5
-        version: 0.0.5(typescript@5.8.2)
+        specifier: 0.0.6
+        version: 0.0.6(typescript@5.8.2)
       '@radix-ui/react-checkbox':
         specifier: ^1.1.4
         version: 1.1.4(@types/react-dom@19.0.4(@types/react@19.0.12))(@types/react@19.0.12)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1377,6 +1377,10 @@ packages:
 
   '@lit-protocol/vincent-sdk@0.0.5':
     resolution: {integrity: sha512-VbemAoEOHE1UdGPi5RaJviNustWegE0N8/4bKgBJb7Z66zocE3TTa6bidBpAVVZNTi/iTUntHHPM76J7Yp78pg==}
+    engines: {node: 20.11.1}
+
+  '@lit-protocol/vincent-sdk@0.0.6':
+    resolution: {integrity: sha512-oLZEE3REcRuS0N1SO3WTUR9Lstpku0eKuNZ693YaJuRAlu2sMTeodHFUr68D9hPpdhn5G7LCtRkXlbGu4EFpAA==}
     engines: {node: 20.11.1}
 
   '@lit-protocol/wasm@7.0.9':
@@ -3301,7 +3305,6 @@ packages:
 
   bun@1.2.6:
     resolution: {integrity: sha512-v0G1dOS5ALc4laomafP2h/PjO9qLF7mwzXySo3VJFiX2Ty70WmPjuGRNGdk65Djk0u3ahpFTtCrzsgIj/NDOiw==}
-    cpu: [arm64, x64, aarch64]
     os: [darwin, linux, win32]
     hasBin: true
 
@@ -9334,6 +9337,41 @@ snapshots:
       - utf-8-validate
 
   '@lit-protocol/vincent-sdk@0.0.5(typescript@5.8.2)':
+    dependencies:
+      '@lit-protocol/auth-helpers': 7.0.9(typescript@5.8.2)
+      '@lit-protocol/constants': 7.0.9(typescript@5.8.2)
+      '@lit-protocol/lit-node-client': 7.0.9(typescript@5.8.2)
+      '@noble/secp256k1': 2.2.3
+      did-jwt: 8.0.9
+      ethers: 5.7.1
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - '@azure/app-configuration'
+      - '@azure/cosmos'
+      - '@azure/data-tables'
+      - '@azure/identity'
+      - '@azure/keyvault-secrets'
+      - '@azure/storage-blob'
+      - '@capacitor/preferences'
+      - '@deno/kv'
+      - '@netlify/blobs'
+      - '@planetscale/database'
+      - '@react-native-async-storage/async-storage'
+      - '@upstash/redis'
+      - '@vercel/blob'
+      - '@vercel/kv'
+      - '@walletconnect/modal'
+      - aws4fetch
+      - bufferutil
+      - db0
+      - encoding
+      - ioredis
+      - supports-color
+      - typescript
+      - uploadthing
+      - utf-8-validate
+
+  '@lit-protocol/vincent-sdk@0.0.6(typescript@5.8.2)':
     dependencies:
       '@lit-protocol/auth-helpers': 7.0.9(typescript@5.8.2)
       '@lit-protocol/constants': 7.0.9(typescript@5.8.2)
