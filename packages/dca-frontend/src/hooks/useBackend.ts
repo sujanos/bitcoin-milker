@@ -1,8 +1,10 @@
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 
-import { BACKEND_URL, REDIRECT_URI } from '@/config';
-import { JwtContext } from '@/contexts/jwt';
-import { useVincentWebAppClient } from '@/hooks/useVincentWebAppClient';
+import { useJwtContext, useVincentWebAuthClient } from '@lit-protocol/vincent-app-sdk/react';
+
+import { env } from '@/config/env';
+
+const { VITE_APP_ID, VITE_BACKEND_URL, VITE_REDIRECT_URI } = env;
 
 type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -19,7 +21,11 @@ export type DCA = {
     purchaseAmount: number;
     purchaseIntervalHuman: string;
     vincentAppVersion: number;
-    walletAddress: string;
+    pkpInfo: {
+      ethAddress: string;
+      publicKey: string;
+      tokenId: string;
+    };
     updatedAt: string;
   };
 };
@@ -31,16 +37,16 @@ export interface CreateDCARequest {
 }
 
 export const useBackend = () => {
-  const { authInfo } = useContext(JwtContext);
-  const vincentWebAppClient = useVincentWebAppClient();
+  const { authInfo } = useJwtContext();
+  const vincentWebAuthClient = useVincentWebAuthClient(VITE_APP_ID);
 
   const getJwt = useCallback(() => {
     // Redirect to Vincent Auth consent page with appId and version
-    vincentWebAppClient.redirectToConsentPage({
+    vincentWebAuthClient.redirectToConnectPage({
       // consentPageUrl: `http://localhost:3000/`,
-      redirectUri: REDIRECT_URI,
+      redirectUri: VITE_REDIRECT_URI,
     });
-  }, [vincentWebAppClient]);
+  }, [vincentWebAuthClient]);
 
   const sendRequest = useCallback(
     async <T>(endpoint: string, method: HTTPMethod, body?: unknown): Promise<T> => {
@@ -49,11 +55,13 @@ export const useBackend = () => {
       }
 
       const headers: HeadersInit = {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${authInfo.jwt}`,
       };
+      if (body != null) {
+        headers['Content-Type'] = 'application/json';
+      }
 
-      const response = await fetch(`${BACKEND_URL}${endpoint}`, {
+      const response = await fetch(`${VITE_BACKEND_URL}${endpoint}`, {
         method,
         headers,
         ...(body ? { body: JSON.stringify(body) } : {}),

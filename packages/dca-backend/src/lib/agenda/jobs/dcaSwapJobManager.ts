@@ -5,19 +5,19 @@ import * as executeDCASwapJobDef from './executeDCASwap';
 import { getAgenda } from '../agendaClient';
 
 interface FindSpecificScheduledJobParams {
+  ethAddress: string;
   mustExist?: boolean;
   scheduleId: string;
-  walletAddress: string;
 }
 
 const logger = consola.withTag('executeDCASwapJobManager');
 
-export async function listJobsByWalletAddress({ walletAddress }: { walletAddress: string }) {
+export async function listJobsByEthAddress({ ethAddress }: { ethAddress: string }) {
   const agendaClient = getAgenda();
-  logger.log('listing jobs', { walletAddress });
+  logger.log('listing jobs', { ethAddress });
 
   return (await agendaClient.jobs({
-    'data.walletAddress': walletAddress,
+    'data.pkpInfo.ethAddress': ethAddress,
   })) as executeDCASwapJobDef.JobType[];
 }
 
@@ -28,15 +28,15 @@ export async function findJob(
   params: FindSpecificScheduledJobParams
 ): Promise<executeDCASwapJobDef.JobType | undefined>;
 export async function findJob({
+  ethAddress,
   mustExist,
   scheduleId,
-  walletAddress,
 }: FindSpecificScheduledJobParams): Promise<executeDCASwapJobDef.JobType | undefined> {
   const agendaClient = getAgenda();
 
   const jobs = (await agendaClient.jobs({
     _id: new Types.ObjectId(scheduleId),
-    'data.walletAddress': walletAddress,
+    'data.pkpInfo.ethAddress': ethAddress,
   })) as executeDCASwapJobDef.JobType[];
 
   logger.log(`Found ${jobs.length} jobs with ID ${scheduleId}`);
@@ -54,8 +54,10 @@ export async function editJob({
   data: Omit<executeDCASwapJobDef.JobParams, 'updatedAt'>;
   scheduleId: string;
 }) {
-  const { vincentAppVersion, walletAddress } = data;
-  const job = await findJob({ scheduleId, walletAddress, mustExist: true });
+  const {
+    pkpInfo: { ethAddress },
+  } = data;
+  const job = await findJob({ ethAddress, scheduleId, mustExist: true });
   const { purchaseIntervalHuman } = data;
 
   if (purchaseIntervalHuman !== job.attrs.data.purchaseIntervalHuman) {
@@ -66,17 +68,17 @@ export async function editJob({
     job.repeatEvery(purchaseIntervalHuman);
   }
 
-  job.attrs.data = { ...data, vincentAppVersion, updatedAt: new Date() };
+  job.attrs.data = { ...data, updatedAt: new Date() };
 
   return (await job.save()) as unknown as executeDCASwapJobDef.JobType;
 }
 
 export async function disableJob({
+  ethAddress,
   scheduleId,
-  walletAddress,
 }: Omit<FindSpecificScheduledJobParams, 'mustExist'>) {
   // Idempotent; if a job we're trying to disable doesn't exist, it is disabled.
-  const job = await findJob({ scheduleId, walletAddress, mustExist: false });
+  const job = await findJob({ ethAddress, scheduleId, mustExist: false });
 
   if (!job) return null;
 
@@ -87,10 +89,10 @@ export async function disableJob({
 }
 
 export async function enableJob({
+  ethAddress,
   scheduleId,
-  walletAddress,
 }: Omit<FindSpecificScheduledJobParams, 'mustExist'>) {
-  const job = await findJob({ scheduleId, walletAddress, mustExist: true });
+  const job = await findJob({ ethAddress, scheduleId, mustExist: true });
 
   logger.log(`Enabling DCA job ${scheduleId}`);
   job.attrs.data.updatedAt = new Date();
@@ -99,14 +101,14 @@ export async function enableJob({
 }
 
 export async function cancelJob({
+  ethAddress,
   scheduleId,
-  walletAddress,
 }: Omit<FindSpecificScheduledJobParams, 'mustExist'>) {
   const agendaClient = getAgenda();
   logger.log(`Cancelling (deleting) DCA job ${scheduleId}`);
   return agendaClient.cancel({
     _id: new Types.ObjectId(scheduleId),
-    'data.walletAddress': walletAddress,
+    'data.pkpInfo.ethAddress': ethAddress,
   });
 }
 
@@ -125,8 +127,8 @@ export async function createJob(
     updatedAt: new Date(),
   });
 
-  // Currently we only allow a single DCA per walletAddress
-  job.unique({ 'data.walletAddress': data.walletAddress });
+  // Currently we only allow a single DCA per pkp
+  job.unique({ 'data.pkpInfo.ethAddress': data.pkpInfo.ethAddress });
 
   // Schedule the job based on provided options
   if (options.interval) {

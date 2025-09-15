@@ -1,5 +1,6 @@
 dist
 /packages/**/dist
+/packages/**/data
 node_modules
 
 data
