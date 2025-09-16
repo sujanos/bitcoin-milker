@@ -1,6 +1,8 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { LogOut, RefreshCcw } from 'lucide-react';
+
+import { useJwtContext } from '@lit-protocol/vincent-app-sdk/react';
 
 import { Badge } from '@/components/ui/badge';
 import { Box, BoxDescription, BoxTitle } from '@/components/ui/box';
@@ -8,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
-import { JwtContext } from '@/contexts/jwt';
 import { useChain } from '@/hooks/useChain';
 
 const formatAddress = (address: string | undefined) => {
@@ -22,7 +23,7 @@ export const Wallet: React.FC = () => {
   const [wethBalance, setWethBalance] = useState<string>('0');
   const [isLoadingBalance, setIsLoadingBalance] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const { authInfo, logOut } = useContext(JwtContext);
+  const { authInfo, logOut } = useJwtContext();
 
   // Function to fetch PKP wethBalanceWei directly using ethers.js
   const fetchPkpBalance = useCallback(async () => {

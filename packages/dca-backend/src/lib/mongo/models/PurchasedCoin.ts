@@ -8,6 +8,13 @@ const purchasedCoinSchemaDefinition = {
     required: true,
     type: String,
   },
+  ethAddress: {
+    index: true,
+    lowercase: true,
+    match: /^0x[a-fA-F0-9]{40}$/,
+    required: true,
+    type: String,
+  },
   purchaseAmount: {
     required: true,
     type: String,
@@ -41,13 +48,6 @@ const purchasedCoinSchemaDefinition = {
     sparse: true,
     type: String,
     unique: true,
-  },
-  walletAddress: {
-    index: true,
-    lowercase: true,
-    match: /^0x[a-fA-F0-9]{40}$/,
-    required: true,
-    type: String,
   },
 } as const;
 

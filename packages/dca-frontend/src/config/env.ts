@@ -19,19 +19,13 @@ const BooleanOrBooleanStringSchema = z
 
 export const env = createEnv({
   emptyStringAsUndefined: true,
-  runtimeEnv: process.env,
-  server: {
-    ALCHEMY_API_KEY: z.string().optional(),
-    ALCHEMY_POLICY_ID: z.string().optional(),
-    ALLOWED_AUDIENCE: z.string().url(),
-    BASE_RPC_URL: z.string().url(),
-    COINRANKING_API_KEY: z.string(),
-    CORS_ALLOWED_DOMAIN: z.string(),
-    DEFAULT_TX_CONFIRMATIONS: z.coerce.number().default(6),
-    IS_DEVELOPMENT: BooleanOrBooleanStringSchema,
-    MONGODB_URI: z.string().url(),
-    PORT: z.coerce.number(),
-    VINCENT_APP_ID: z.coerce.number(),
-    VINCENT_DELEGATEE_PRIVATE_KEY: z.string(),
+  runtimeEnv: import.meta.env,
+  clientPrefix: 'VITE_',
+  client: {
+    VITE_APP_ID: z.coerce.number(),
+    VITE_BACKEND_URL: z.string(),
+    VITE_EXPECTED_AUDIENCE: z.string().default(window.location.origin),
+    VITE_IS_DEVELOPMENT: BooleanOrBooleanStringSchema.default(false),
+    VITE_REDIRECT_URI: z.string().default(window.location.origin),
   },
 });

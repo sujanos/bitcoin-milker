@@ -1,22 +1,26 @@
-import { useContext } from 'react';
 import { Buffer } from 'buffer';
 globalThis.Buffer = Buffer;
 
+import { JwtProvider, useJwtContext } from '@lit-protocol/vincent-app-sdk/react';
+
+import { env } from '@/config/env';
+
 import './App.css';
 
-import { JwtProvider, JwtContext } from '@/contexts/jwt';
 import { Home } from '@/pages/home';
 import { Login } from '@/pages/login';
 
+const { VITE_APP_ID } = env;
+
 function AppContent() {
-  const { authInfo } = useContext(JwtContext);
+  const { authInfo } = useJwtContext();
 
   return authInfo ? <Home /> : <Login />;
 }
 
 function App() {
   return (
-    <JwtProvider>
+    <JwtProvider appId={VITE_APP_ID}>
       <AppContent />
     </JwtProvider>
   );

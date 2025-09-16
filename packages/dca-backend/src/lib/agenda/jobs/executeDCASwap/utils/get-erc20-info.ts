@@ -1,8 +1,4 @@
-/* eslint-disable no-console */
-
 import { ethers } from 'ethers';
-
-import { getAddressesByChainId } from './get-addresses-by-chain-id';
 
 const ERC20_ABI = [
   'function balanceOf(address owner) external view returns (uint256)',
@@ -37,16 +33,3 @@ export const getErc20Info = async (
     ethersContract,
   };
 };
-
-export async function getExistingUniswapAllowance(
-  chainId: string,
-  contract: ethers.Contract,
-  userAddress: string
-): Promise<ethers.BigNumber> {
-  const { UNISWAP_V3_ROUTER } = getAddressesByChainId(chainId);
-
-  const currentAllowance = await contract.allowance(userAddress, UNISWAP_V3_ROUTER);
-  console.log(`Current router allowance: ${ethers.utils.formatEther(currentAllowance)} WETH`);
-
-  return currentAllowance;
-}

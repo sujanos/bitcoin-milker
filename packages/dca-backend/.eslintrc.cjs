@@ -5,7 +5,7 @@ module.exports = {
   extends: ['../../.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
   parserOptions: { project: true },
-  ignorePatterns: ['.eslintrc.cjs', 'jest.config.js'],
+  ignorePatterns: ['.eslintrc.cjs', 'jest.config.js', 'init-mongo.js'],
   overrides: [
     {
       files: ['test.spec.ts'],

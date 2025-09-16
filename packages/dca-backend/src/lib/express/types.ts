@@ -1,7 +1,5 @@
-import { z } from 'zod';
+import type { AuthenticatedRequest } from '@lit-protocol/vincent-app-sdk/expressMiddleware';
 
-import { ScheduleIdentitySchema, ScheduleParamsSchema } from './schema';
+export const userKey = 'user' as const;
 
-export type ScheduleParams = z.infer<typeof ScheduleParamsSchema>;
-
-export type ScheduleIdentity = z.infer<typeof ScheduleIdentitySchema>;
+export type VincentAuthenticatedRequest = AuthenticatedRequest<typeof userKey>;

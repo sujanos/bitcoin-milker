@@ -10,7 +10,7 @@ const meta = {
     layout: 'centered',
   },
   argTypes: {
-    walletAddress: { control: 'text' },
+    ethAddress: { control: 'text' },
   },
 } satisfies Meta<typeof Wallet>;
 
@@ -19,14 +19,14 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    walletAddress: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+    ethAddress: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
   },
 
   play: async ({ canvasElement, parameters }) => {
     const canvas = within(canvasElement);
 
-    const walletAddress = parameters.walletAddress;
-    const explorerButton = canvas.getByText(walletAddress, { selector: 'a' });
+    const ethAddress = parameters.ethAddress;
+    const explorerButton = canvas.getByText(ethAddress, { selector: 'a' });
     await expect(explorerButton).toBeInTheDocument();
 
     const refreshBalanceButton = canvas.getByText('Refreshing...', { selector: 'button' });
