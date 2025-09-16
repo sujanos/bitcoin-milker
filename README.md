@@ -1,4 +1,4 @@
-# vincent-dca
+# Vincent Starter App
 
 A monorepo that powers the _Vincent DCA_ demo application.
 
