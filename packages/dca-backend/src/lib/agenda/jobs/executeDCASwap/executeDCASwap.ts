@@ -105,7 +105,7 @@ async function handleSwapExecution({
     recipient: ethAddress,
     rpcUrl: BASE_RPC_URL,
     tokenInAddress: BASE_WETH_ADDRESS,
-    tokenInAmount: wethAmount.toString(),
+    tokenInAmount: ethers.utils.formatUnits(wethAmount, 18),
     tokenOutAddress: topCoin.coinAddress,
   });
 
