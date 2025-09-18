@@ -5,7 +5,7 @@
   "description": "Monorepo for vincent DCA backend + frontend",
   "homepage": "https://github.com/LIT-protocol/vincent-dca",
   "engines": {
-    "node": "^24.8.0",
+    "node": "^20.19.2",
     "pnpm": "10.7.0"
   },
   "type": "module",
