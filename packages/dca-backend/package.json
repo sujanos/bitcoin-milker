@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "engines": {
-    "node": "^22.16.0",
+    "node": "^20.19.2",
     "pnpm": "10.7.0"
   },
   "packageManager": "pnpm@10.7.0",
@@ -12,7 +12,7 @@
     "lint": "pnpm eslint ./src",
     "build": "pnpm unbuild",
     "dev": "pnpm dotenvx run -- pnpm tsx watch src/bin/serverWorker.ts",
-    "start": "pnpm dotenvx run -- node ./dist/bin/serverWorker.mjs",
+    "start": "node ./dist/bin/serverWorker.mjs",
     "startWorker": "node ./dist/bin/jobWorker.mjs",
     "startApiServer": "node ./dist/bin/apiServer.mjs",
     "clean": "pnpm exec rm -Rf node_modules dist",

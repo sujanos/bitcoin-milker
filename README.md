@@ -6,7 +6,7 @@ This project demonstrates how to schedule and execute recurring DCA (Dollar-Cost
 
 ## Prerequisites
 
-- Node ^20.11.1
+- Node ^20.19.2
 - pnpm ^10.7.0
 - Docker or a local MongoDB instance
 - A Vincent App with ERC20 approval and Uniswap swap abilities
