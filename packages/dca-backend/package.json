@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "engines": {
-    "node": "^20.19.2",
+    "node": "^22.16.0",
     "pnpm": "10.7.0"
   },
   "packageManager": "pnpm@10.7.0",
