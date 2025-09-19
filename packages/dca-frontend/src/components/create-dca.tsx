@@ -59,7 +59,7 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Dynamic & Secure DCA on Base</CardTitle>
           <CardDescription className="mt-2 text-gray-600">
-            This demo agent automatically purchases wBTC with a specific amount of USDC on your
+            This DCA agent automatically purchases wBTC with a specific amount of USDC on your
             predefined schedule.
             <br />
             <br />
@@ -85,7 +85,7 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
             automation combined with secure, permissioned execution.
             <br />
             <br />
-            <strong>Note:</strong> Ensure your wallet holds sufficient Base ETH for the demo to
+            <strong>Note:</strong> Ensure your wallet holds sufficient Base ETH for the app to
             function smoothly.
           </CardDescription>
         </CardHeader>
