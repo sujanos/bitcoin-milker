@@ -18,14 +18,15 @@ const formatAddress = (address: string | undefined) => {
 };
 
 export const Wallet: React.FC = () => {
-  const { chain, provider, wethContract } = useChain();
+  const { chain, provider, usdcContract, wbtcContract } = useChain();
   const [ethBalance, setEthBalance] = useState<string>('0');
-  const [wethBalance, setWethBalance] = useState<string>('0');
+  const [usdcBalance, setUsdcBalance] = useState<string>('0');
+  const [wbtcBalance, setWbtcBalance] = useState<string>('0');
   const [isLoadingBalance, setIsLoadingBalance] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { authInfo, logOut } = useJwtContext();
 
-  // Function to fetch PKP wethBalanceWei directly using ethers.js
+  // Function to fetch PKP balances
   const fetchPkpBalance = useCallback(async () => {
     if (!authInfo?.pkp.ethAddress) return;
 
@@ -33,22 +34,23 @@ export const Wallet: React.FC = () => {
       setIsLoadingBalance(true);
       setError(null);
 
-      const [ethBalanceWei, wethBalanceWei] = await Promise.all([
+      const [ethBalanceWei, usdcBalance, wbtcBalanceWei] = await Promise.all([
         provider.getBalance(authInfo?.pkp.ethAddress),
-        wethContract.balanceOf(authInfo?.pkp.ethAddress),
+        usdcContract.balanceOf(authInfo?.pkp.ethAddress),
+        wbtcContract.balanceOf(authInfo?.pkp.ethAddress),
       ]);
 
-      // Both have 18 decimal places
-      setEthBalance(ethers.utils.formatEther(ethBalanceWei));
-      setWethBalance(ethers.utils.formatEther(wethBalanceWei));
+      setEthBalance(ethers.utils.formatUnits(ethBalanceWei, 18));
+      setUsdcBalance(ethers.utils.formatUnits(usdcBalance, 6));
+      setWbtcBalance(ethers.utils.formatUnits(wbtcBalanceWei, 18));
 
       setIsLoadingBalance(false);
     } catch (err: unknown) {
-      console.error('Error fetching PKP wethBalanceWei:', err);
+      console.error('Error fetching PKP balances:', err);
       setError(`Failed to fetch wallet balance`);
       setIsLoadingBalance(false);
     }
-  }, [authInfo, provider, wethContract]);
+  }, [authInfo, provider, usdcContract, wbtcContract]);
 
   useEffect(() => {
     fetchPkpBalance();
@@ -102,7 +104,7 @@ export const Wallet: React.FC = () => {
         </Box>
 
         <Box className="flex flex-row items-stretch justify-between">
-          <BoxDescription>WETH Balance:</BoxDescription>
+          <BoxDescription>USDC Balance:</BoxDescription>
           <span
             style={{
               fontSize: '20px',
@@ -110,7 +112,20 @@ export const Wallet: React.FC = () => {
               color: '#333',
             }}
           >
-            {isLoadingBalance ? 'Loading...' : `${parseFloat(wethBalance).toFixed(4)} WETH`}
+            {isLoadingBalance ? 'Loading...' : `${parseFloat(usdcBalance).toFixed(4)} USDC`}
+          </span>
+        </Box>
+
+        <Box className="flex flex-row items-stretch justify-between">
+          <BoxDescription>WBTC Balance:</BoxDescription>
+          <span
+            style={{
+              fontSize: '20px',
+              fontWeight: 'bold',
+              color: '#333',
+            }}
+          >
+            {isLoadingBalance ? 'Loading...' : `${parseFloat(wbtcBalance).toFixed(4)} WBTC`}
           </span>
         </Box>
 

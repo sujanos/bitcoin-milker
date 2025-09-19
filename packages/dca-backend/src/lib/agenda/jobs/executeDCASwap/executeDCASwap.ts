@@ -4,15 +4,13 @@ import { ethers } from 'ethers';
 
 import { IRelayPKP } from '@lit-protocol/types';
 
-import { Coin, getTopBaseMemeCoin } from './baseMemeCoinLoader';
-import { getEthereumPriceUsd } from './ethPriceLoader';
 import { handleOperationExecution } from './utils';
 import {
   alchemyGasSponsor,
   alchemyGasSponsorApiKey,
   alchemyGasSponsorPolicyId,
 } from './utils/alchemy';
-import { getERC20Contract } from './utils/get-erc20-info';
+import { balanceOf, getERC20Contract } from './utils/get-erc20-info';
 import {
   getErc20ApprovalToolClient,
   getSignedUniswapQuote,
@@ -39,18 +37,19 @@ export type JobParams = {
 const { BASE_RPC_URL } = env;
 
 const BASE_CHAIN_ID = 8453;
-const BASE_WETH_ADDRESS = '0x4200000000000000000000000000000000000006';
+const BASE_USDC_ADDRESS = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913';
+const BASE_WBTC_ADDRESS = '0x0555E30da8f98308EdB960aa94C0Db47230d2B9c';
 const BASE_UNISWAP_V3_ROUTER = '0x2626664c2603336E57B271c5C0b26F421741e481';
 
 const baseProvider = new ethers.providers.StaticJsonRpcProvider(BASE_RPC_URL);
-const wethContract = getERC20Contract(BASE_WETH_ADDRESS, baseProvider);
+const usdcContract = getERC20Contract(BASE_USDC_ADDRESS, baseProvider);
 
-async function addWethApproval({
+async function addUsdcApproval({
   ethAddress,
-  wethAmount,
+  usdcAmount,
 }: {
   ethAddress: `0x${string}`;
-  wethAmount: ethers.BigNumber;
+  usdcAmount: ethers.BigNumber;
 }): Promise<`0x${string}` | undefined> {
   const erc20ApprovalToolClient = getErc20ApprovalToolClient();
   const approvalParams = {
@@ -60,8 +59,8 @@ async function addWethApproval({
     chainId: BASE_CHAIN_ID,
     rpcUrl: BASE_RPC_URL,
     spenderAddress: BASE_UNISWAP_V3_ROUTER,
-    tokenAddress: BASE_WETH_ADDRESS,
-    tokenAmount: wethAmount.mul(5).toString(), // Approve 5x the amount to spend so we don't wait for approval tx's every time we run
+    tokenAddress: BASE_USDC_ADDRESS,
+    tokenAmount: usdcAmount.mul(5).toString(), // Approve 5x the amount to spend so we don't wait for approval tx's every time we run
   };
   const approvalContext = {
     delegatorPkpEthAddress: ethAddress,
@@ -93,20 +92,24 @@ async function addWethApproval({
 }
 
 async function handleSwapExecution({
-  ethAddress,
-  topCoin,
-  wethAmount,
+  delegatorAddress,
+  tokenInAddress,
+  tokenInAmount,
+  tokenInDecimals,
+  tokenOutAddress,
 }: {
-  ethAddress: `0x${string}`;
-  topCoin: Coin;
-  wethAmount: ethers.BigNumber;
+  delegatorAddress: `0x${string}`;
+  tokenInAddress: `0x${string}`;
+  tokenInAmount: ethers.BigNumber;
+  tokenInDecimals: number;
+  tokenOutAddress: `0x${string}`;
 }): Promise<`0x${string}`> {
   const signedUniswapQuote = await getSignedUniswapQuote({
-    recipient: ethAddress,
+    tokenInAddress,
+    tokenOutAddress,
+    recipient: delegatorAddress,
     rpcUrl: BASE_RPC_URL,
-    tokenInAddress: BASE_WETH_ADDRESS,
-    tokenInAmount: ethers.utils.formatUnits(wethAmount, 18),
-    tokenOutAddress: topCoin.coinAddress,
+    tokenInAmount: ethers.utils.formatUnits(tokenInAmount, tokenInDecimals),
   });
 
   const uniswapToolClient = getUniswapToolClient();
@@ -115,7 +118,7 @@ async function handleSwapExecution({
     rpcUrlForUniswap: BASE_RPC_URL,
   };
   const swapContext = {
-    delegatorPkpEthAddress: ethAddress,
+    delegatorPkpEthAddress: delegatorAddress,
   };
 
   const swapPrecheckResult = await uniswapToolClient.precheck(swapParams, swapContext);
@@ -148,32 +151,25 @@ export async function executeDCASwap(job: JobType): Promise<void> {
       purchaseAmount,
     });
 
-    consola.debug('Fetching top coin, WETH balance and ETHUSD price...');
-    const [topCoin, wEthBalance, ethPriceUsd] = await Promise.all([
-      getTopBaseMemeCoin(),
-      wethContract.balanceOf(ethAddress),
-      getEthereumPriceUsd(),
-    ]);
-    consola.debug('Got top coin:', topCoin);
+    consola.debug('Fetching user USDC balance...');
+    const usdcBalance = await balanceOf(usdcContract, ethAddress);
 
-    if (!wEthBalance.gt(0)) {
+    const _purchaseAmount = ethers.utils.parseUnits(purchaseAmount.toFixed(6), 6);
+    if (usdcBalance.lt(_purchaseAmount)) {
       throw new Error(
-        `No wEth balance for account ${ethAddress} - please fund this account with WETH to swap`
+        `Not enough balance for account ${ethAddress} - please fund this account with USDC to DCA`
       );
     }
 
-    const wethAmount = ethers.utils.parseEther((purchaseAmount / ethPriceUsd).toFixed(18));
-
     consola.log('Job details', {
       ethAddress,
-      ethPriceUsd,
       purchaseAmount,
-      wethAmount,
+      usdcBalance: ethers.utils.formatUnits(usdcBalance, 6),
     });
 
-    const approvalHash = await addWethApproval({
-      wethAmount,
+    const approvalHash = await addUsdcApproval({
       ethAddress: ethAddress as `0x${string}`,
+      usdcAmount: _purchaseAmount,
     });
 
     if (approvalHash) {
@@ -186,27 +182,26 @@ export async function executeDCASwap(job: JobType): Promise<void> {
     }
 
     const swapHash = await handleSwapExecution({
-      topCoin,
-      wethAmount,
-      ethAddress: ethAddress as `0x${string}`,
+      delegatorAddress: ethAddress as `0x${string}`,
+      tokenInAddress: BASE_USDC_ADDRESS,
+      tokenInAmount: _purchaseAmount,
+      tokenInDecimals: 6,
+      tokenOutAddress: BASE_WBTC_ADDRESS,
     });
 
     // Create a purchase record with all required fields
     const purchase = new PurchasedCoin({
       ethAddress,
-      coinAddress: topCoin.coinAddress,
-      name: topCoin.name,
+      coinAddress: BASE_WBTC_ADDRESS,
+      name: 'wBTC',
       purchaseAmount: purchaseAmount.toFixed(2),
-      purchasePrice: topCoin.price,
       scheduleId: _id,
-      symbol: topCoin.symbol,
+      symbol: 'wBTC',
       txHash: swapHash,
     });
     await purchase.save();
 
-    consola.debug(
-      `Successfully created purchase record for ${topCoin.symbol} with tx hash ${swapHash}`
-    );
+    consola.debug(`Successfully purchased ${purchaseAmount} USDC of wBTC at tx hash ${swapHash}`);
   } catch (e) {
     // Catch-and-rethrow is usually an antipattern, but Agenda doesn't log failed job reasons to console
     // so this is our chance to log the job failure details using Consola before we throw the error

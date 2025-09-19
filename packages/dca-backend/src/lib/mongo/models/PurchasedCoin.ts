@@ -25,16 +25,6 @@ const purchasedCoinSchemaDefinition = {
       },
     },
   },
-  purchasePrice: {
-    required: true,
-    type: String,
-    validate: {
-      message: 'Price must be a valid decimal number',
-      validator(v: string) {
-        return /^\d*\.?\d+$/.test(v);
-      },
-    },
-  },
   scheduleId: {
     index: true,
     required: true,

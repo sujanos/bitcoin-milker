@@ -59,8 +59,8 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Dynamic & Secure DCA on Base</CardTitle>
           <CardDescription className="mt-2 text-gray-600">
-            This demo agent automatically identifies and purchases the top-performing Base memecoin
-            on your predefined schedule.
+            This demo agent automatically purchases wBTC with a specific amount of USDC on your
+            predefined schedule.
             <br />
             <br />
             <strong>How It Works (Powered by Vincent):</strong>
@@ -71,7 +71,7 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
             <br />
             <br />
             The agent operates using permissions securely delegated by you, following strict rules
-            you establish during setup—such as daily spending limit. These onchain rules are
+            you establish during setup—such as authorized abilities. These onchain rules are
             cryptographically enforced by{' '}
             <a
               href="https://litprotocol.com/"
@@ -85,8 +85,8 @@ export const CreateDCA: React.FC<CreateDCAProps> = ({ onCreate }) => {
             automation combined with secure, permissioned execution.
             <br />
             <br />
-            <strong>Quick Tip:</strong> Ensure your wallet holds sufficient Base WETH + ETH for the
-            demo to function smoothly.
+            <strong>Note:</strong> Ensure your wallet holds sufficient Base ETH for the demo to
+            function smoothly.
           </CardDescription>
         </CardHeader>
 

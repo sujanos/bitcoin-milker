@@ -19,10 +19,10 @@ export async function startWorker() {
       // If we get an error we know is non-transient (the user must fix the state), disable the job
       // The user can re-enable it after resolving the fatal error.
       if (
-        error?.message?.includes('No native eth balance on account') ||
-        error?.message?.includes('Not enough ETH to pay for gas for token approval') ||
-        error?.message?.includes('Not enough WETH to swap') ||
-        error?.message?.includes('No wEth balance for account')
+        error?.message?.includes('Not enough balance') ||
+        error?.message?.includes('insufficient funds') ||
+        error?.message?.includes('gas too low') ||
+        error?.message?.includes('out of gas')
       ) {
         consola.log(`Disabling job due to fatal error: ${error.message}`);
         job.disable();
