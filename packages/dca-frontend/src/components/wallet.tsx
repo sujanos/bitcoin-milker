@@ -42,7 +42,7 @@ export const Wallet: React.FC = () => {
 
       setEthBalance(ethers.utils.formatUnits(ethBalanceWei, 18));
       setUsdcBalance(ethers.utils.formatUnits(usdcBalance, 6));
-      setWbtcBalance(ethers.utils.formatUnits(wbtcBalanceWei, 18));
+      setWbtcBalance(ethers.utils.formatUnits(wbtcBalanceWei, 8));
 
       setIsLoadingBalance(false);
     } catch (err: unknown) {
