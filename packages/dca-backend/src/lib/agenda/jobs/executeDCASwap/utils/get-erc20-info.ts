@@ -16,20 +16,9 @@ export function getERC20Contract(address: string, provider: ethers.providers.Jso
   return new ethers.Contract(address, ERC20_ABI, provider);
 }
 
-export const getErc20Info = async (
-  userRpcProvider: ethers.providers.StaticJsonRpcProvider,
-  tokenAddress: string
-): Promise<{ decimals: ethers.BigNumber; ethersContract: ethers.Contract }> => {
-  const contractCode = await userRpcProvider.getCode(tokenAddress);
-  if (contractCode === '0x') {
-    throw new Error(`No contract code found at ${tokenAddress}`);
-  }
-
-  const ethersContract = getERC20Contract(tokenAddress, userRpcProvider);
-  const decimals = await ethersContract.decimals();
-
-  return {
-    decimals,
-    ethersContract,
-  };
-};
+export function balanceOf(
+  ethersContract: ethers.Contract,
+  address: string
+): Promise<ethers.BigNumber> {
+  return ethersContract.balanceOf(address) as Promise<ethers.BigNumber>;
+}

@@ -18,10 +18,10 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const authenticateButton = canvas.getByText('Authenticate with Vincent', {
+    const connectButton = canvas.getByText('Connect with Vincent', {
       selector: 'button',
     });
-    await expect(authenticateButton).toBeInTheDocument();
+    await expect(connectButton).toBeInTheDocument();
 
     const litProtocolLink = canvas.getByText('LIT Protocol', { selector: 'a' });
     await expect(litProtocolLink).toHaveAttribute('href', 'https://litprotocol.com/');
