@@ -49,7 +49,7 @@
     "@lit-protocol/lit-node-client": "^7.3.0",
     "@lit-protocol/types": "^7.3.0",
     "@lit-protocol/vincent-ability-erc20-approval": "3.1.0",
-    "@lit-protocol/vincent-ability-uniswap-swap": "3.0.0",
+    "@lit-protocol/vincent-ability-uniswap-swap": "4.0.0",
     "@lit-protocol/vincent-app-sdk": "2.1.0",
     "@lit-protocol/vincent-scaffold-sdk": "1.1.9-mma",
     "@noble/secp256k1": "^2.2.3",

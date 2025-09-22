@@ -110,8 +110,8 @@ importers:
         specifier: 3.1.0
         version: 3.1.0(@lit-protocol/vincent-app-sdk@2.1.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10))(@lit-protocol/vincent-tool-sdk@1.0.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/node@20.17.28)(@types/react@19.0.12)(bufferutil@4.0.9)(react@19.0.0)(typescript@5.8.2)(utf-8-validate@5.0.10)
       '@lit-protocol/vincent-ability-uniswap-swap':
-        specifier: 3.0.0
-        version: 3.0.0(@lit-protocol/vincent-app-sdk@2.1.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(hardhat@2.26.3(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10))(jsbi@3.2.5)(typescript@5.8.2)(utf-8-validate@5.0.10)
+        specifier: 4.0.0
+        version: 4.0.0(@lit-protocol/vincent-app-sdk@2.1.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(hardhat@2.26.3(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10))(jsbi@3.2.5)(typescript@5.8.2)(utf-8-validate@5.0.10)
       '@lit-protocol/vincent-app-sdk':
         specifier: 2.1.0
         version: 2.1.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)
@@ -1536,10 +1536,10 @@ packages:
   '@lit-protocol/vincent-ability-sdk@2.1.0':
     resolution: {integrity: sha512-GTC02zh/Kzqsnph4n6QTDH8t95ylTpFPHp9ImYehLTWw93vdSLWi8DR25TjtQ2Uet+RtrmLiMH0wnhJ3gWuYVw==}
 
-  '@lit-protocol/vincent-ability-uniswap-swap@3.0.0':
-    resolution: {integrity: sha512-ZAxumx3gcgaaDb38g7KmpiFibMwl6iypVSwr80ZlvUxot73rA5c7Vtfv8gTL7YVJHYCBYlq+rOzaCZkbmL9W0g==}
+  '@lit-protocol/vincent-ability-uniswap-swap@4.0.0':
+    resolution: {integrity: sha512-VFDMTySX4sWLJd/ucs8wFFrimnWBsfOkkRDF0o1J9BaPzrPmK/U31CptGbeLioiviMAviM7F09J6rIyZVY8Jlg==}
     peerDependencies:
-      '@lit-protocol/vincent-app-sdk': ^2.1.0
+      '@lit-protocol/vincent-app-sdk': ^2.2.0
 
   '@lit-protocol/vincent-app-sdk@2.0.2-mma':
     resolution: {integrity: sha512-naGTvNhXl1dSS4oHIiyHOBwHMRNxvS7zZh45ZPkGwhAe6KUUULlQ4dmbAQez791BGZliy4WYSnEN2BOAe5mFsA==}
@@ -10571,7 +10571,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@lit-protocol/vincent-ability-uniswap-swap@3.0.0(@lit-protocol/vincent-app-sdk@2.1.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(hardhat@2.26.3(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10))(jsbi@3.2.5)(typescript@5.8.2)(utf-8-validate@5.0.10)':
+  '@lit-protocol/vincent-ability-uniswap-swap@4.0.0(@lit-protocol/vincent-app-sdk@2.1.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(hardhat@2.26.3(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10))(jsbi@3.2.5)(typescript@5.8.2)(utf-8-validate@5.0.10)':
     dependencies:
       '@lit-protocol/lit-node-client': 7.3.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)
       '@lit-protocol/vincent-ability-sdk': 2.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
