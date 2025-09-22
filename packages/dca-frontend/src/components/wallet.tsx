@@ -53,7 +53,7 @@ export const Wallet: React.FC = () => {
   }, [authInfo, provider, usdcContract, wbtcContract]);
 
   useEffect(() => {
-    fetchPkpBalance();
+    queueMicrotask(() => fetchPkpBalance());
   }, [fetchPkpBalance]);
 
   return (

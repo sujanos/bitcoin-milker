@@ -31,6 +31,7 @@ export const env = createEnv({
     IS_DEVELOPMENT: BooleanOrBooleanStringSchema,
     MONGODB_URI: z.string().url(),
     PORT: z.coerce.number(),
+    SENTRY_DSN: z.string().optional(),
     VINCENT_APP_ID: z.coerce.number(),
     VINCENT_DELEGATEE_PRIVATE_KEY: z.string(),
   },
