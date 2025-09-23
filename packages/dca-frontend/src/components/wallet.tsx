@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
-import { LogOut, RefreshCcw } from 'lucide-react';
+import { LogOut, RefreshCcw, Copy, Check } from 'lucide-react';
 
 import { useJwtContext } from '@lit-protocol/vincent-app-sdk/react';
 
@@ -24,6 +24,7 @@ export const Wallet: React.FC = () => {
   const [wbtcBalance, setWbtcBalance] = useState<string>('0');
   const [isLoadingBalance, setIsLoadingBalance] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState<boolean>(false);
   const { authInfo, logOut } = useJwtContext();
 
   // Function to fetch PKP balances
@@ -56,6 +57,18 @@ export const Wallet: React.FC = () => {
     queueMicrotask(() => fetchPkpBalance());
   }, [fetchPkpBalance]);
 
+  const copyAddress = useCallback(async () => {
+    const address = authInfo?.pkp.ethAddress;
+    if (!address) return;
+    try {
+      await navigator.clipboard.writeText(address);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (err) {
+      console.error('Failed to copy address to clipboard', err);
+    }
+  }, [authInfo?.pkp.ethAddress]);
+
   return (
     <Card data-test-id="wallet" className="w-full bg-white p-6 shadow-sm">
       <CardHeader className="text-center">
@@ -68,15 +81,27 @@ export const Wallet: React.FC = () => {
         <Box className="flex flex-row items-center justify-between">
           <BoxTitle>Wallet Address:</BoxTitle>
 
-          <a
-            href={`${chain.blockExplorerUrls[0]}/address/${authInfo?.pkp.ethAddress}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:opacity-80"
-            title={authInfo?.pkp.ethAddress}
-          >
-            {formatAddress(authInfo?.pkp.ethAddress)}
-          </a>
+          <div className="flex items-center gap-2">
+            <a
+              href={`${chain.blockExplorerUrls[0]}/address/${authInfo?.pkp.ethAddress}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:opacity-80"
+              title={authInfo?.pkp.ethAddress}
+            >
+              {formatAddress(authInfo?.pkp.ethAddress)}
+            </a>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={copyAddress}
+              disabled={!authInfo?.pkp.ethAddress}
+              title={copied ? 'Copied!' : 'Copy address'}
+              aria-label="Copy wallet address"
+            >
+              {copied ? <Check /> : <Copy />}
+            </Button>
+          </div>
         </Box>
 
         <Separator />
