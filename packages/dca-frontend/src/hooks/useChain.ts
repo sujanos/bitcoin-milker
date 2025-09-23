@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { LIT_EVM_CHAINS } from '@lit-protocol/constants';
 import { LITEVMChain } from '@lit-protocol/types';
 import { ethers } from 'ethers';
@@ -16,16 +16,18 @@ const USDC_CONTRACT_ADDRESSES: Record<number, string> = {
 export const useChain = () => {
   const [chain, setChain] = useState<LITEVMChain>(LIT_EVM_CHAINS.base);
 
-  const provider = useMemo(() => new ethers.providers.JsonRpcProvider(chain.rpcUrls[0]), [chain]);
+  const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrls[0]);
 
-  const usdcContract = useMemo(
-    () => new ethers.Contract(USDC_CONTRACT_ADDRESSES[chain.chainId], ERC20_ABI, provider),
-    [chain, provider]
+  const usdcContract = new ethers.Contract(
+    USDC_CONTRACT_ADDRESSES[chain.chainId],
+    ERC20_ABI,
+    provider
   );
 
-  const wbtcContract = useMemo(
-    () => new ethers.Contract(WBTC_CONTRACT_ADDRESSES[chain.chainId], ERC20_ABI, provider),
-    [chain, provider]
+  const wbtcContract = new ethers.Contract(
+    WBTC_CONTRACT_ADDRESSES[chain.chainId],
+    ERC20_ABI,
+    provider
   );
 
   return {

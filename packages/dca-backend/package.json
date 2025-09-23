@@ -21,7 +21,8 @@
     "mongo:up": "mkdir -p data && (docker run -d --name mongo --env-file .env -p 27017:27017 -v \"$PWD/data:/data/db\" local-mongo || docker start mongo)",
     "mongo:stop": "docker stop mongo || true",
     "mongo:rm": "docker rm -f mongo || true",
-    "mongo:logs": "docker logs -f mongo"
+    "mongo:logs": "docker logs -f mongo",
+    "sentry:sourcemaps": "pnpm dotenvx run -- sentry-cli sourcemaps inject --org $SENTRY_ORG --project $SENTRY_PROJECT ./dist && sentry-cli sourcemaps upload --org $SENTRY_ORG --project $SENTRY_PROJECT ./dist"
   },
   "repository": {
     "type": "git",
@@ -51,8 +52,11 @@
     "@lit-protocol/vincent-ability-erc20-approval": "3.1.0",
     "@lit-protocol/vincent-ability-uniswap-swap": "4.0.0",
     "@lit-protocol/vincent-app-sdk": "2.1.0",
+    "@lit-protocol/vincent-contracts-sdk": "^1.0.1",
     "@lit-protocol/vincent-scaffold-sdk": "1.1.9-mma",
     "@noble/secp256k1": "^2.2.3",
+    "@sentry/cli": "^2.52.0",
+    "@sentry/node": "^10.5.0",
     "@t3-oss/env-core": "^0.12.0",
     "@whisthub/agenda": "^7.0.2",
     "consola": "^3.4.2",
@@ -60,8 +64,10 @@
     "dataloader": "^2.2.3",
     "did-jwt": "^8.0.9",
     "express": "^4.21.2",
+    "helmet": "^8.1.0",
     "mongoose": "^8.10.1",
     "node-cache": "^5.1.2",
+    "semver": "^7.7.2",
     "tslib": "^2.8.1"
   },
   "devDependencies": {
@@ -69,6 +75,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/jest": "^29.5.14",
+    "@types/semver": "^7.7.0",
     "ethers": "^5.8.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.3.0",

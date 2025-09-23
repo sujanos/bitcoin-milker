@@ -1,28 +1,28 @@
+import * as Sentry from '@sentry/node';
 import { Job } from '@whisthub/agenda';
 import consola from 'consola';
 import { ethers } from 'ethers';
 
 import { IRelayPKP } from '@lit-protocol/types';
 
-import { handleOperationExecution } from './utils';
+import { type AppData, assertPermittedVersion } from '../jobVersion';
 import {
   alchemyGasSponsor,
   alchemyGasSponsorApiKey,
   alchemyGasSponsorPolicyId,
-} from './utils/alchemy';
-import { balanceOf, getERC20Contract } from './utils/get-erc20-info';
+  balanceOf,
+  getERC20Contract,
+  getUserPermittedVersion,
+  handleOperationExecution,
+} from './utils';
 import {
   getErc20ApprovalToolClient,
   getSignedUniswapQuote,
   getUniswapToolClient,
 } from './vincentAbilities';
 import { env } from '../../../env';
+import { normalizeError } from '../../../error';
 import { PurchasedCoin } from '../../../mongo/models/PurchasedCoin';
-
-export type AppData = {
-  id: number;
-  version: number;
-};
 
 export type JobType = Job<JobParams>;
 export type JobParams = {
@@ -34,7 +34,7 @@ export type JobParams = {
   updatedAt: Date;
 };
 
-const { BASE_RPC_URL } = env;
+const { BASE_RPC_URL, VINCENT_APP_ID } = env;
 
 const BASE_CHAIN_ID = 8453;
 const BASE_USDC_ADDRESS = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913';
@@ -135,11 +135,12 @@ async function handleSwapExecution({
   return swapExecutionResult.result.swapTxHash as `0x${string}`;
 }
 
-export async function executeDCASwap(job: JobType): Promise<void> {
+export async function executeDCASwap(job: JobType, sentryScope: Sentry.Scope): Promise<void> {
   try {
     const {
       _id,
       data: {
+        app,
         pkpInfo: { ethAddress, publicKey },
         purchaseAmount,
       },
@@ -152,7 +153,17 @@ export async function executeDCASwap(job: JobType): Promise<void> {
     });
 
     consola.debug('Fetching user USDC balance...');
-    const usdcBalance = await balanceOf(usdcContract, ethAddress);
+    const [usdcBalance, userPermittedAppVersion] = await Promise.all([
+      balanceOf(usdcContract, ethAddress),
+      getUserPermittedVersion({ ethAddress, appId: VINCENT_APP_ID }),
+    ]);
+
+    sentryScope.addBreadcrumb({
+      data: {
+        usdcBalance,
+      },
+      message: 'User USDC balance',
+    });
 
     const _purchaseAmount = ethers.utils.parseUnits(purchaseAmount.toFixed(6), 6);
     if (usdcBalance.lt(_purchaseAmount)) {
@@ -160,16 +171,43 @@ export async function executeDCASwap(job: JobType): Promise<void> {
         `Not enough balance for account ${ethAddress} - please fund this account with USDC to DCA`
       );
     }
+    if (!userPermittedAppVersion) {
+      throw new Error(
+        `User ${ethAddress} revoked permission to run this app. Used version to generate: ${app.version}`
+      );
+    }
+
+    // Run the saved version or update to the currently permitted one if version is compatible
+    const appVersionToRun = assertPermittedVersion(app.version, userPermittedAppVersion);
+    sentryScope.addBreadcrumb({
+      data: {
+        app,
+        appVersionToRun,
+        userPermittedAppVersion,
+      },
+    });
+    if (appVersionToRun !== app.version) {
+      // User updated the permitted app version after creating the job, so we need to update it
+      // eslint-disable-next-line no-param-reassign
+      job.attrs.data.app = { ...job.attrs.data.app, version: appVersionToRun };
+      await job.save();
+    }
 
     consola.log('Job details', {
       ethAddress,
       purchaseAmount,
+      userPermittedAppVersion,
       usdcBalance: ethers.utils.formatUnits(usdcBalance, 6),
     });
 
     const approvalHash = await addUsdcApproval({
       ethAddress: ethAddress as `0x${string}`,
       usdcAmount: _purchaseAmount,
+    });
+    sentryScope.addBreadcrumb({
+      data: {
+        approvalHash,
+      },
     });
 
     if (approvalHash) {
@@ -187,6 +225,11 @@ export async function executeDCASwap(job: JobType): Promise<void> {
       tokenInAmount: _purchaseAmount,
       tokenInDecimals: 6,
       tokenOutAddress: BASE_WBTC_ADDRESS,
+    });
+    sentryScope.addBreadcrumb({
+      data: {
+        swapHash,
+      },
     });
 
     // Create a purchase record with all required fields
@@ -206,7 +249,8 @@ export async function executeDCASwap(job: JobType): Promise<void> {
     // Catch-and-rethrow is usually an antipattern, but Agenda doesn't log failed job reasons to console
     // so this is our chance to log the job failure details using Consola before we throw the error
     // to Agenda, which will write the failure reason to the Agenda job document in Mongo
-    const err = e as Error;
+    const err = normalizeError(e);
+    sentryScope.captureException(err);
     consola.error(err.message, err.stack);
     throw e;
   }
