@@ -1,6 +1,3 @@
-import { ethers } from 'ethers';
-
-import { LIT_RPC } from '@lit-protocol/constants';
 import { LitNodeClient } from '@lit-protocol/lit-node-client';
 import { bundledVincentAbility as erc20ApprovalBundledVincentAbility } from '@lit-protocol/vincent-ability-erc20-approval';
 import {
@@ -10,19 +7,12 @@ import {
 } from '@lit-protocol/vincent-ability-uniswap-swap';
 import { getVincentAbilityClient } from '@lit-protocol/vincent-app-sdk/abilityClient';
 
-import { env } from '../../../env';
-
-const { VINCENT_DELEGATEE_PRIVATE_KEY } = env;
+import { delegateeSigner } from './utils/signer';
 
 const litNodeClient = new LitNodeClient({
   debug: true,
   litNetwork: 'datil',
 });
-
-export const yellowstoneSigner = new ethers.Wallet(
-  VINCENT_DELEGATEE_PRIVATE_KEY,
-  new ethers.providers.StaticJsonRpcProvider(LIT_RPC.CHRONICLE_YELLOWSTONE)
-);
 
 export async function getSignedUniswapQuote(
   quoteParams: QuoteParams
@@ -35,20 +25,20 @@ export async function getSignedUniswapQuote(
   return getSignedUniswapQuoteAction({
     litNodeClient,
     quoteParams,
-    ethersSigner: yellowstoneSigner,
+    ethersSigner: delegateeSigner,
   });
 }
 
 export function getErc20ApprovalToolClient() {
   return getVincentAbilityClient({
     bundledVincentAbility: erc20ApprovalBundledVincentAbility,
-    ethersSigner: yellowstoneSigner,
+    ethersSigner: delegateeSigner,
   });
 }
 
 export function getUniswapToolClient() {
   return getVincentAbilityClient({
     bundledVincentAbility: uniswapSwapBundledVincentAbility,
-    ethersSigner: yellowstoneSigner,
+    ethersSigner: delegateeSigner,
   });
 }

@@ -1,15 +1,15 @@
 import { ethers } from 'ethers';
 
-import { LIT_NETWORK, LIT_RPC } from '@lit-protocol/constants';
+import { LIT_NETWORK } from '@lit-protocol/constants';
 import { LitContracts } from '@lit-protocol/contracts-sdk';
 
 import { env } from './lib/env';
 
-const { VINCENT_DELEGATEE_PRIVATE_KEY } = env;
+const { CHRONICLE_YELLOWSTONE_RPC, VINCENT_DELEGATEE_PRIVATE_KEY } = env;
 
 const ethersSigner = new ethers.Wallet(
   VINCENT_DELEGATEE_PRIVATE_KEY as string,
-  new ethers.providers.StaticJsonRpcProvider(LIT_RPC.CHRONICLE_YELLOWSTONE)
+  new ethers.providers.StaticJsonRpcProvider(CHRONICLE_YELLOWSTONE_RPC)
 );
 
 const litContractClient = new LitContracts({

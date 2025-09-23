@@ -1,6 +1,8 @@
 import { createEnv } from '@t3-oss/env-core';
 import { z } from 'zod';
 
+import { LIT_RPC } from '@lit-protocol/constants';
+
 // Ref: https://github.com/t3-oss/t3-env/pull/145
 const booleanStrings = ['true', 'false', true, false, '1', '0', 'yes', 'no', 'y', 'n', 'on', 'off'];
 const BooleanOrBooleanStringSchema = z
@@ -25,8 +27,9 @@ export const env = createEnv({
     ALCHEMY_POLICY_ID: z.string().optional(),
     ALLOWED_AUDIENCE: z.string().url(),
     BASE_RPC_URL: z.string().url(),
+    CHRONICLE_YELLOWSTONE_RPC: z.string().url().default(LIT_RPC.CHRONICLE_YELLOWSTONE),
     COINRANKING_API_KEY: z.string(),
-    CORS_ALLOWED_DOMAIN: z.string(),
+    CORS_ALLOWED_DOMAIN: z.string().url(),
     DEFAULT_TX_CONFIRMATIONS: z.coerce.number().default(6),
     IS_DEVELOPMENT: BooleanOrBooleanStringSchema,
     MONGODB_URI: z.string().url(),
