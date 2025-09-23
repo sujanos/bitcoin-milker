@@ -23,10 +23,10 @@ export default defineConfig(({ command }) => {
       ...(sentryEnabled
         ? [
             sentryVitePlugin({
-              applicationKey: 'vincent-dca-frontend',
+              applicationKey: process.env.SENTRY_PROJECT,
               authToken: process.env.SENTRY_AUTH_TOKEN,
-              org: 'lit-protocol-lw',
-              project: 'vincent-dca-frontend',
+              org: process.env.SENTRY_ORG,
+              project: process.env.SENTRY_PROJECT,
             }),
           ]
         : []),

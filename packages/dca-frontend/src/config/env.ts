@@ -28,5 +28,6 @@ export const env = createEnv({
     VITE_IS_DEVELOPMENT: BooleanOrBooleanStringSchema.default(false),
     VITE_REDIRECT_URI: z.string().default(window.location.origin),
     VITE_SENTRY_DSN: z.string().optional(),
+    VITE_SENTRY_FILTER: z.string().optional().default('dca-frontend'),
   },
 });

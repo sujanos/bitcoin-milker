@@ -10,7 +10,7 @@ import { env } from '@/config/env';
 // Initialize Zendesk support widget
 initZendesk();
 
-const { VITE_BACKEND_URL, VITE_IS_DEVELOPMENT, VITE_SENTRY_DSN } = env;
+const { VITE_BACKEND_URL, VITE_IS_DEVELOPMENT, VITE_SENTRY_DSN, VITE_SENTRY_FILTER } = env;
 
 if (VITE_SENTRY_DSN) {
   Sentry.init({
@@ -23,7 +23,7 @@ if (VITE_SENTRY_DSN) {
       Sentry.browserTracingIntegration(),
       Sentry.thirdPartyErrorFilterIntegration({
         behaviour: 'drop-error-if-contains-third-party-frames',
-        filterKeys: ['vincent-dca-frontend'],
+        filterKeys: [VITE_SENTRY_FILTER],
       }),
     ],
   });
