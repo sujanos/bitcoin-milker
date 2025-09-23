@@ -35,7 +35,7 @@ This codebase is composed of three main parts:
 
 To execute operations on behalf of your users (delegators), you need a Vincent App to which they can delegate their agent wallet.
 
-A demo Vincent App already exists: [Memecoin DCA](https://dashboard.heyvincent.ai/developer/appId/9796398001) in the [Vincent Dashboard](https://dashboard.heyvincent.ai/).
+A demo Vincent App already exists: [wBTC DCA](https://dashboard.heyvincent.ai/explorer/appId/9796398001) in the [Vincent Dashboard](https://dashboard.heyvincent.ai/).
 
 You can access the demo app frontend at: https://demo.heyvincent.ai/
 
@@ -44,11 +44,14 @@ You can access the demo app frontend at: https://demo.heyvincent.ai/
 To run this code and sign on behalf of your delegators, create your own Vincent App:
 
 1. Go to the [Vincent Dashboard](https://dashboard.heyvincent.ai/) and log in as a builder.
-2. Create a new app similar to [Memecoin DCA](https://dashboard.heyvincent.ai/user/appId/9796398001/connect).
+2. Create a new app similar to [wBTC DCA](https://dashboard.heyvincent.ai/user/appId/9796398001/connect).
 3. Add the ERC20 Approval ability.
 4. Add the Uniswap Swap ability.
 5. Publish the app.
-6. Once users can connect to it, configure the backend with your App ID and the delegatee private key via environment variables.
+6. Once users can connect to it, configure the backend with your App ID and the delegatee private key via environment variables. You can use the Deploy on Railway button below to deploy the entire app.
+7. Once deployed, you'll need to update the `App User URL` and `Redirect URIs` to the URL deployed from Railway.
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/UY2g5I?referralCode=iNEMKY&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
 ## Quick Start
 
