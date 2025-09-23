@@ -51,12 +51,7 @@ export const SelectFrequency: React.FC<FrequencySelectProps> = ({
       <Label htmlFor="frequency" className="mb-1 block text-sm font-medium">
         Frequency
       </Label>
-      <Select
-        required={required}
-        {...(value !== undefined ? { value } : { defaultValue: '1 day' })}
-        onValueChange={onChange}
-        disabled={disabled}
-      >
+      <Select required={required} value={value} onValueChange={onChange} disabled={disabled}>
         <SelectTrigger id="frequency" className="w-full">
           <SelectValue placeholder="Select frequency" />
         </SelectTrigger>
