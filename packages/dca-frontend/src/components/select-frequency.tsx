@@ -2,7 +2,13 @@ import React from 'react';
 
 import { Box } from '@/components/ui/box';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export const FREQUENCIES = [
   {
@@ -51,6 +57,9 @@ export const SelectFrequency: React.FC<FrequencySelectProps> = ({
         onValueChange={onChange}
         disabled={disabled}
       >
+        <SelectTrigger id="frequency" className="w-full">
+          <SelectValue placeholder="Select frequency" />
+        </SelectTrigger>
         <SelectContent>
           {FREQUENCIES.map((frequency) => (
             <SelectItem key={frequency.value} value={frequency.value}>
