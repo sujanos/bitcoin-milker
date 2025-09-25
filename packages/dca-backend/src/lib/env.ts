@@ -28,7 +28,6 @@ export const env = createEnv({
     ALLOWED_AUDIENCE: z.string().url(),
     BASE_RPC_URL: z.string().url(),
     CHRONICLE_YELLOWSTONE_RPC: z.string().url().default(LIT_RPC.CHRONICLE_YELLOWSTONE),
-    COINRANKING_API_KEY: z.string(),
     CORS_ALLOWED_DOMAIN: z.string().url(),
     DEFAULT_TX_CONFIRMATIONS: z.coerce.number().default(6),
     IS_DEVELOPMENT: BooleanOrBooleanStringSchema,
