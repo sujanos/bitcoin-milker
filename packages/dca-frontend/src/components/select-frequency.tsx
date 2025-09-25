@@ -12,14 +12,6 @@ import {
 
 export const FREQUENCIES = [
   {
-    label: 'Every minute',
-    value: '1 minute',
-  },
-  {
-    label: 'Hourly',
-    value: '1 hour',
-  },
-  {
     label: 'Daily',
     value: '1 day',
   },

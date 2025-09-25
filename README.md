@@ -37,7 +37,7 @@ To execute operations on behalf of your users (delegators), you need a Vincent A
 
 A demo Vincent App already exists: [wBTC DCA](https://dashboard.heyvincent.ai/explorer/appId/9796398001) in the [Vincent Dashboard](https://dashboard.heyvincent.ai/).
 
-You can access the demo app frontend at: https://demo.heyvincent.ai/
+You can access the demo app frontend at: https://dca.heyvincent.ai/
 
 ### Create your own Vincent App
 
