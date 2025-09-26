@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
-import { LogOut, RefreshCcw, Copy, Check } from 'lucide-react';
+import { LogOut, RefreshCcw, Copy, Check, WalletIcon } from 'lucide-react';
 
 import { useJwtContext } from '@lit-protocol/vincent-app-sdk/react';
 
@@ -10,7 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
+import { env } from '@/config/env';
 import { useChain } from '@/hooks/useChain';
+
+const { VITE_APP_ID } = env;
 
 const formatAddress = (address: string | undefined) => {
   if (!address) return 'Loading...';
@@ -124,7 +127,7 @@ export const Wallet: React.FC = () => {
           >
             {isLoadingBalance
               ? 'Loading...'
-              : `${parseFloat(ethBalance).toFixed(4)} ${chain.symbol}`}
+              : `${parseFloat(ethBalance).toFixed(8)} ${chain.symbol}`}
           </span>
         </Box>
 
@@ -137,7 +140,7 @@ export const Wallet: React.FC = () => {
               color: '#333',
             }}
           >
-            {isLoadingBalance ? 'Loading...' : `${parseFloat(usdcBalance).toFixed(4)} USDC`}
+            {isLoadingBalance ? 'Loading...' : `${parseFloat(usdcBalance).toFixed(6)} USDC`}
           </span>
         </Box>
 
@@ -150,7 +153,7 @@ export const Wallet: React.FC = () => {
               color: '#333',
             }}
           >
-            {isLoadingBalance ? 'Loading...' : `${parseFloat(wbtcBalance).toFixed(4)} WBTC`}
+            {isLoadingBalance ? 'Loading...' : `${parseFloat(wbtcBalance).toFixed(8)} WBTC`}
           </span>
         </Box>
 
@@ -185,7 +188,18 @@ export const Wallet: React.FC = () => {
             </>
           )}
         </Button>
-        <Button className="w-full my-1" variant="destructive" onClick={logOut}>
+        <Button
+          className="w-full mt-2"
+          onClick={() =>
+            window.open(
+              `https://dashboard.heyvincent.ai/user/appId/${VITE_APP_ID}/wallet`,
+              '_blank'
+            )
+          }
+        >
+          <WalletIcon /> withdraw with walletconnect
+        </Button>
+        <Button className="w-full mt-2" variant="destructive" onClick={logOut}>
           <LogOut /> Log Out
         </Button>
       </CardContent>
