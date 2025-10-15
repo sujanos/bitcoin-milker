@@ -17,7 +17,7 @@
     "startApiServer": "node ./dist/bin/apiServer.mjs",
     "clean": "pnpm exec rm -Rf node_modules dist",
     "mintRli": "pnpm dotenvx run -- pnpm tsx ./src/bin/mintRLINft.ts",
-    "mongo:build": "docker build -t local-mongo .",
+    "mongo:build": "docker build -f Dockerfile.mongo -t local-mongo .",
     "mongo:up": "mkdir -p data && (docker run -d --name mongo --env-file .env -p 27017:27017 -v \"$PWD/data:/data/db\" local-mongo || docker start mongo)",
     "mongo:stop": "docker stop mongo || true",
     "mongo:rm": "docker rm -f mongo || true",
