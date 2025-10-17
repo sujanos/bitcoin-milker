@@ -10,6 +10,7 @@ import './App.css';
 import { Home } from '@/pages/home';
 import { Login } from '@/pages/login';
 import { Header } from '@/components/ui/header';
+import { Footer } from '@/components/ui/footer';
 import { DottedBackground } from '@/components/ui/dotted-background';
 
 const { VITE_APP_ID } = env;
@@ -22,6 +23,7 @@ function AppContent() {
       <DottedBackground />
       <Header title="Vincent DCA" />
       {authInfo ? <Home /> : <Login />}
+      <Footer />
     </div>
   );
 }
