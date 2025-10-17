@@ -3,7 +3,7 @@ import React from 'react';
 interface PageHeaderProps {
   /** The main title text */
   title: string;
-  /** Optional subtitle displayed above the title in uppercase */
+  /** Optional subtitle displayed below the title in uppercase */
   subtitle?: string;
   /** Optional description text displayed below the title */
   description?: string | React.ReactNode;
