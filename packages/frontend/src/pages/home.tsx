@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { DepositWBTC } from '@/components/deposit-wbtc';
+import { DepositCBBTC } from '@/components/deposit-wbtc';
 import { YieldPositions } from '@/components/yield-positions';
 import { Wallet } from '@/components/wallet';
 import { PageHeader } from '@/components/ui/page-header';
@@ -21,11 +21,11 @@ export const Home: React.FC = () => {
         <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 shadow-sm w-full">
           <PageHeader
             title="BitcoinMilker"
-            subtitle="wBTC Yield Optimizer"
+            subtitle="cbBTC Yield Optimizer"
             description={
               <>
-                Deposit your wBTC and let our agent maximize yield through AAVE lending and
-                yield-bearing token strategies. Learn more about{' '}
+                Deposit your cbBTC and let our agent maximize yield through AAVE lending and weETH
+                strategies on Base network. Learn more about{' '}
                 <a
                   href="https://docs.heyvincent.ai/"
                   target="_blank"
@@ -51,7 +51,7 @@ export const Home: React.FC = () => {
               style={{ backgroundColor: 'transparent' }}
             >
               <TabsTrigger value={Tab.Deposit} className="data-[state=active]:bg-[#FF4205]">
-                Deposit wBTC
+                Deposit cbBTC
               </TabsTrigger>
               <TabsTrigger value={Tab.Positions} className="data-[state=active]:bg-[#FF4205]">
                 Yield Positions
@@ -63,7 +63,7 @@ export const Home: React.FC = () => {
 
             <div className="min-h-[300px] sm:min-h-[400px] md:min-h-[500px]">
               <TabsContent value={Tab.Deposit}>
-                <DepositWBTC onDeposit={() => setActiveTab(Tab.Positions)} />
+                <DepositCBBTC onDeposit={() => setActiveTab(Tab.Positions)} />
               </TabsContent>
               <TabsContent value={Tab.Positions}>
                 <YieldPositions />

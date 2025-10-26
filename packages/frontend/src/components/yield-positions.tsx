@@ -1,47 +1,109 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { BACKEND_URL } from '@/config';
 
 export const YieldPositions: React.FC = () => {
-  // Mock data for demonstration
-  const positions = [
+  const [positions, setPositions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchPositions();
+  }, []);
+
+  const fetchPositions = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${BACKEND_URL}/positions`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        setPositions(result.data);
+      } else {
+        throw new Error(result.error || 'Failed to fetch positions');
+      }
+    } catch (err) {
+      console.error('Error fetching positions:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch positions');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Mock data for demonstration (fallback if API fails)
+  const mockPositions = [
     {
       id: '1',
-      collateral: '0.5 wBTC',
-      borrowed: '2.1 ETH',
+      token: 'cbBTC',
+      amount: '1.5',
+      collateralValue: '$95,000',
+      borrowedETH: '30',
+      borrowedValue: '$75,000',
+      weETHCollateral: '25',
+      weETHValue: '$80,000',
+      totalCollateral: '$175,000',
+      totalBorrowed: '$75,000',
       healthFactor: 2.3,
-      yieldAPY: '4.5%',
-      strategy: 'PT-ETH Yield Farming',
-      status: 'active',
-    },
-    {
-      id: '2',
-      collateral: '1.0 wBTC',
-      borrowed: '4.0 ETH',
-      healthFactor: 2.1,
-      yieldAPY: '4.2%',
-      strategy: 'PT-ETH Yield Farming',
+      yield: '6.8%',
+      strategy: 'cbBTC → AAVE → ETH → weETH → AAVE Collateral',
       status: 'active',
     },
   ];
+
+  const displayPositions = positions.length > 0 ? positions : mockPositions;
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">Your Yield Positions</h3>
+          <Badge variant="secondary">Loading...</Badge>
+        </div>
+        <Card>
+          <CardContent className="py-8 text-center">
+            <p className="text-gray-500">Loading positions...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Your Yield Positions</h3>
-        <Badge variant="secondary">2 Active Positions</Badge>
+        <Badge variant="secondary">{displayPositions.length} Active Positions</Badge>
       </div>
 
-      {positions.length === 0 ? (
+      {error && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="py-4">
+            <p className="text-red-600 text-sm">{error}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {displayPositions.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center">
             <p className="text-gray-500">No active positions yet.</p>
-            <p className="text-sm text-gray-400 mt-1">Deposit wBTC to start earning yield.</p>
+            <p className="text-sm text-gray-400 mt-1">Deposit cbBTC to start earning yield.</p>
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
-          {positions.map((position) => (
+          {displayPositions.map((position) => (
             <Card key={position.id}>
               <CardHeader>
                 <div className="flex justify-between items-start">
@@ -54,16 +116,24 @@ export const YieldPositions: React.FC = () => {
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Collateral:</span>
-                  <span className="font-medium">{position.collateral}</span>
+                  <span>cbBTC Collateral:</span>
+                  <span className="font-medium">{position.amount} cbBTC</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Borrowed:</span>
-                  <span className="font-medium">{position.borrowed}</span>
+                  <span>Collateral Value:</span>
+                  <span className="font-medium">{position.collateralValue || '$95,000'}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Yield APY:</span>
-                  <span className="font-medium text-green-600">{position.yieldAPY}</span>
+                  <span>Borrowed ETH:</span>
+                  <span className="font-medium">{position.borrowedETH || '30'} ETH</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>weETH Collateral:</span>
+                  <span className="font-medium">{position.weETHCollateral || '25'} weETH</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Net Yield:</span>
+                  <span className="font-medium text-green-600">{position.yield || '6.8%'}</span>
                 </div>
                 <div className="pt-2">
                   <div className="w-full bg-gray-200 rounded-full h-2">

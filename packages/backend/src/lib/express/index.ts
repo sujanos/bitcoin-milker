@@ -15,6 +15,7 @@ import {
   handleDeleteScheduleRoute,
   handleEditScheduleRoute,
 } from './schedules';
+import { handleDepositCBBTC, handleGetPositions } from './deposit';
 import { userKey, VincentAuthenticatedRequest } from './types';
 import { env } from '../env';
 import { serviceLogger } from '../logger';
@@ -84,6 +85,20 @@ export const registerRoutes = (app: Express) => {
     setSentryUserMiddleware,
     handler(handleDeleteScheduleRoute)
   );
+
+  // Health check endpoint (no auth required)
+  app.get('/health', (req, res) => {
+    res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      app: 'BitcoinMilker',
+      version: '1.0.0',
+    });
+  });
+
+  // cbBTC deposit and positions endpoints
+  app.post('/deposit-cbbtc', middleware, setSentryUserMiddleware, handler(handleDepositCBBTC));
+  app.get('/positions', middleware, setSentryUserMiddleware, handler(handleGetPositions));
 
   serviceLogger.info(`Routes registered`);
 };
