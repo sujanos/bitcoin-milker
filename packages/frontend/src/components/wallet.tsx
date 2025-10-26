@@ -200,7 +200,7 @@ export const Wallet: React.FC = () => {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/external-logos/wbtc.svg" alt="WBTC" className="w-4 h-4" />
+            <img src="/external-logos/cbbtc_logo.png" alt="cbBTC" className="w-4 h-4" />
             <span
               className="text-sm font-medium"
               style={{
@@ -208,7 +208,7 @@ export const Wallet: React.FC = () => {
                 color: 'var(--footer-text-color, #121212)',
               }}
             >
-              wBTC Balance
+              cbBTC Balance
             </span>
           </div>
           <span
