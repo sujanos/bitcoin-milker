@@ -1,5 +1,5 @@
 {
   "*.{ts,tsx,cjs,js,json,md}": ["prettier --write"],
   "packages/dca-frontend/**/*.{ts,tsx,cjs,js}": ["pnpm --filter dca-frontend -- lint --fix"],
-  "packages/dca-backend/**/*.{ts,tsx,cjs,js}": ["pnpm --filter dca-backend lint --fix"]
+  "packages/backend/**/*.{ts,tsx,cjs,js}": ["pnpm --filter backend lint --fix"]
 }

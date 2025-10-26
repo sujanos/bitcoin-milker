@@ -1,14 +1,14 @@
 # BitcoinMilker
 
-A Vincent App that maximizes yield on idle wBTC by using it as collateral for AAVE lending and yield-bearing token strategies.
+A Vincent App that maximizes yield on idle cbBTC by using it as collateral for AAVE lending and weETH strategies on Base network.
 
 ## Overview
 
 BitcoinMilker allows users to:
 
-- Deposit wBTC
-- Automatically deploy capital in AAVE lending protocol
-- Borrow assets at low rates and purchase high-yield tokens
+- Deposit cbBTC (Coinbase Bitcoin)
+- Automatically deploy capital in AAVE lending protocol on Base network
+- Borrow assets at low rates and swap to weETH for enhanced yield
 - Generate safe, sustainable yield on Bitcoin holdings
 
 ## Prerequisites
@@ -22,7 +22,7 @@ BitcoinMilker allows users to:
 
 This monorepo contains:
 
-- **Frontend**: React app for depositing wBTC and monitoring yield positions
+- **Frontend**: React app for depositing cbBTC and monitoring yield positions
 - **Backend**: Node.js API server and job scheduler for automated yield optimization
 - **Database**: MongoDB to persist positions and yield strategies
 
@@ -40,11 +40,12 @@ pnpm dev
 
 The yield strategy works as follows:
 
-1. User deposits wBTC
-2. System supplies wBTC to AAVE as collateral
+1. User deposits cbBTC (Coinbase Bitcoin)
+2. System supplies cbBTC to AAVE as collateral on Base network
 3. Borrows ETH at competitive rates (~2.5%)
-4. Purchases PT-ETH tokens yielding ~7%
-5. Net yield: ~4.5% APY with risk management
+4. Swaps ETH to weETH for enhanced yield (~7%)
+5. Supplies weETH as additional collateral
+6. Net yield: ~5-8% APY with risk management
 
 ## Risk Management
 

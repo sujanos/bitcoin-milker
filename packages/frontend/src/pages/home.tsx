@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { DepositCBBTC } from '@/components/deposit-wbtc';
+import { DepositCBBTC } from '@/components/deposit-cbbtc';
 import { YieldPositions } from '@/components/yield-positions';
 import { Wallet } from '@/components/wallet';
 import { PageHeader } from '@/components/ui/page-header';
